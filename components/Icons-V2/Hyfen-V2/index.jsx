@@ -1,2 +1,5 @@
 export * from './RoninBig'
 export * from './Telegram'
+export * from './Discord'
+export * from './Wallet'
+export * from './Key'
