@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 
-const Cross = forwardRef(function Cross({ className, ...props }, ref) {
+const Cross = forwardRef(function Cross({ className, ...props }) {
 	return (
 		<svg
 			{...props}
@@ -14,9 +14,9 @@ const Cross = forwardRef(function Cross({ className, ...props }, ref) {
 			<path
 				d='M41 41L23 23M41 23L23 41'
 				stroke='white'
-				stroke-width='2'
-				stroke-linecap='round'
-				stroke-linejoin='round'
+				strokeWidth='2'
+				strokeLinecap='round'
+				strokeLinejoin='round'
 			/>
 		</svg>
 	)

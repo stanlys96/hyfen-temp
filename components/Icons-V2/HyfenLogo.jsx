@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 
-const HyfenLogo = forwardRef(function HyfenLogo({ className, ...props }, ref) {
+const HyfenLogo = forwardRef(function HyfenLogo({ className, ...props }) {
 	return (
 		<svg
 			{...props}

@@ -111,7 +111,7 @@ export default function BuyCrypto() {
 								<div className='radio'>
 									<label className='text-white flex gap-x-2 items-center'>
 										<input
-											onChange={(e) => setSelectedOption('input')}
+											onChange={() => setSelectedOption('input')}
 											type='radio'
 											value='option1'
 											checked={selectedOption === 'input'}
@@ -122,7 +122,7 @@ export default function BuyCrypto() {
 								<div className='radio'>
 									<label className='text-white flex gap-x-2 items-center'>
 										<input
-											onChange={(e) => setSelectedOption('hyfen')}
+											onChange={() => setSelectedOption('hyfen')}
 											type='radio'
 											value='option2'
 											checked={selectedOption === 'hyfen'}

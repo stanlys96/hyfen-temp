@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 
-const Copy = forwardRef(function Copy({ className, ...props }, ref) {
+const Copy = forwardRef(function Copy({ className, ...props }) {
 	return (
 		<svg
 			{...props}

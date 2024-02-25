@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 
-const Success = forwardRef(function Success({ className }, ref) {
+const Success = forwardRef(function Success({ className }) {
 	return (
 		<svg
 			className={className}

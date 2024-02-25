@@ -11,7 +11,7 @@ import {
 import Lock from '../Icons-V2/Lock'
 import LockOff from '../Icons-V2/LockOff'
 import { RoninBig, Telegram, Discord } from '../Icons-V2/Hyfen-V2'
-import Phone from 'components/Icons-V2/Phone'
+import Phone from '../Icons-V2/Phone'
 
 export const FormInput = ({
 	label,
