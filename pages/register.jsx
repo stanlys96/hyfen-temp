@@ -131,7 +131,11 @@ const ForgotPassword = () => {
 
 			<div className='relative flex gap-x-2 items-center'>
 				<span className='text-white mt-[16px]'>Have an account?</span>
-				<LinkAuth href='/login' className='items-center text-[#2EB4ED]'>
+				<LinkAuth
+					href='/login'
+					className='items-center'
+					textColor='text-[#2EB4ED]'
+				>
 					Login
 				</LinkAuth>
 			</div>

@@ -123,7 +123,11 @@ const ForgotPassword = () => {
 				<span className='text-white mt-[16px]'>
 					Don&apos;t have an account?
 				</span>
-				<LinkAuth href='/register' className='items-center text-[#2EB4ED]'>
+				<LinkAuth
+					href='/register'
+					className='items-center'
+					textColor='text-[#2EB4ED]'
+				>
 					Register
 				</LinkAuth>
 			</div>

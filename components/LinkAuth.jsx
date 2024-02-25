@@ -8,12 +8,13 @@ export default function LinkAuth({
 	textTwo,
 	children,
 	marginTop = true,
+	textColor = 'text-app-disabled',
 }) {
 	return (
 		<Link legacyBehavior passHref href={href}>
 			<a
 				className={[
-					`text-app-disabled font-light text-center ${
+					`${textColor} font-light text-center ${
 						marginTop ? 'mt-[16px]' : 'mt-0'
 					} hover:text-app-primary transition-all duration-300`,
 					className,
