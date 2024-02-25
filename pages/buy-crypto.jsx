@@ -50,18 +50,18 @@ export default function BuyCrypto() {
 		onSubmit: async (values) => {
 			console.log(values)
 			try {
-				if (true) {
-					// await resetPasswordChange({
-					// 	url,
-					// 	password: values.password,
-					// 	password_confirmation: values.password_confirmation,
-					// })
-					// router.replace('/login')
-					// snackbar.success({
-					// 	title: account.password_has_been_reset,
-					// 	description: account.password_has_been_reset_desc,
-					// })
-				}
+				// if (true) {
+				// await resetPasswordChange({
+				// 	url,
+				// 	password: values.password,
+				// 	password_confirmation: values.password_confirmation,
+				// })
+				// router.replace('/login')
+				// snackbar.success({
+				// 	title: account.password_has_been_reset,
+				// 	description: account.password_has_been_reset_desc,
+				// })
+				// }
 			} catch (error) {
 				console.log(error)
 			}
