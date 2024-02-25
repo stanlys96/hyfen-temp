@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.hyfen.gg
+
+# Sitemaps
+Sitemap: https://www.hyfen.gg/sitemap.xml

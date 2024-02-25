@@ -1,0 +1,10 @@
+.GameFiItem {
+	background: linear-gradient(
+		180deg,
+		rgba(133, 164, 240, 0.25) 0%,
+		rgba(167, 49, 233, 0.0148438) 100%
+	);
+	opacity: 0.5;
+	border-radius: 20px;
+	padding: 2rem 3rem;
+}
