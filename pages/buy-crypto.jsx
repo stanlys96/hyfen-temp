@@ -167,7 +167,7 @@ export default function BuyCrypto() {
 								Account Information
 							</p>
 							<FormInput
-								classRoot='mt-5 w-[436px]'
+								classRoot='mt-5 w-[440px]'
 								label={'Email Address'}
 								placeholder={'Email Address'}
 								typeForm='email'

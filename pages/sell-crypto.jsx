@@ -74,7 +74,7 @@ export default function BuyCrypto() {
 				{/* Container */}
 				<HeaderHyfen />
 				<PaymentMethodModal showModal={showModal} setShowModal={setShowModal} />
-				<div className='relative h-full max-w-7xl container mx-auto flex gap-x-5 justify-center items-center h-full pt-[13vh]'>
+				<div className='relative h-full max-w-7xl container mx-auto flex gap-x-10 justify-center items-center h-full pt-[13vh]'>
 					{/* Container content */}
 					<div className='relative h-full flex flex-col justify-start items-center'>
 						<div className='bg-[#1A1E48] p-[30px] rounded-[10px]'>
@@ -131,7 +131,7 @@ export default function BuyCrypto() {
 								Account Information
 							</p>
 							<FormInput
-								classRoot='mt-5 w-[436px]'
+								classRoot='mt-5 w-[450px]'
 								label={'Email Address'}
 								placeholder={'Email Address'}
 								typeForm='email'
