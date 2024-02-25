@@ -1,10 +1,10 @@
-import Verif from 'components/Layouts/Verif'
+import Verif from '../components/Layouts/Verif'
 import { useState } from 'react'
-import ChangePassword from 'components/ForgotPassword/Forms/ChangePassword'
-import EnterCode from 'components/ForgotPassword/Forms/EnterCode'
-import EnterEmail from 'components/ForgotPassword/Forms/EnterEmail'
-import LinkAuth from 'components/LinkAuth'
-import { IconArrowLeft } from 'components/Icons-V2'
+import ChangePassword from '../../components/ForgotPassword/Forms/ChangePassword'
+import EnterCode from '../components/ForgotPassword/Forms/EnterCode'
+import EnterEmail from '../components/ForgotPassword/Forms/EnterEmail'
+import LinkAuth from '../components/LinkAuth'
+import { IconArrowLeft } from '../components/Icons-V2'
 
 const _renderStepContent = (
 	currentStep,

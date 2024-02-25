@@ -1,76 +1,52 @@
-import Verif from 'components/Layouts/Verif'
+import Verif from '../components/Layouts/Verif'
 import { useState } from 'react'
-import { FormInput } from 'components/molecules/FormInput'
-import LinkAuth from 'components/LinkAuth'
-import ButtonAuth from 'components/atoms/ButtonAuth'
-import { IconArrowLeft } from 'components/Icons-V2'
+import { FormInput } from '../components/molecules/FormInput'
+import LinkAuth from '../components/LinkAuth'
+import ButtonAuth from '../components/atoms/ButtonAuth'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import { useRouter } from 'next/router'
 
 const ForgotPassword = () => {
-	const [currentStep, setCurrentStep] = useState(0)
-	const [url, setUrl] = useState('')
-	const [email, setEmail] = useState('')
-	const {
-		values,
-		errors,
-		touched,
-		handleBlur,
-		handleChange,
-		handleSubmit,
-		isSubmitting,
-		isValid,
-		dirty,
-	} = useFormik({
-		initialValues: {
-			password: '',
-			email: '',
-		},
-		validationSchema: yup.object({
-			password: yup
-				.string()
-				.required('Password is required')
-				.trim(`'${'Password is required'}'`)
-				.min(8, 'Must contain 8 characters'),
-			email: yup.string().email('Invalid Email').required('Email is required'),
-		}),
-		onSubmit: async (values) => {
-			try {
-				if (url) {
-					// await resetPasswordChange({
-					// 	url,
-					// 	password: values.password,
-					// 	password_confirmation: values.password_confirmation,
-					// })
+	const router = useRouter()
+	const [url] = useState('')
+	const { values, errors, handleBlur, handleChange, handleSubmit, isValid } =
+		useFormik({
+			initialValues: {
+				password: '',
+				email: '',
+			},
+			validationSchema: yup.object({
+				password: yup
+					.string()
+					.required('Password is required')
+					.trim(`'${'Password is required'}'`)
+					.min(8, 'Must contain 8 characters'),
+				email: yup
+					.string()
+					.email('Invalid Email')
+					.required('Email is required'),
+			}),
+			onSubmit: async (values) => {
+				try {
+					if (url) {
+						// await resetPasswordChange({
+						// 	url,
+						// 	password: values.password,
+						// 	password_confirmation: values.password_confirmation,
+						// })
 
-					router.replace('/login')
-					// snackbar.success({
-					// 	title: account.password_has_been_reset,
-					// 	description: account.password_has_been_reset_desc,
-					// })
+						router.replace('/login')
+						// snackbar.success({
+						// 	title: account.password_has_been_reset,
+						// 	description: account.password_has_been_reset_desc,
+						// })
+					}
+				} catch (error) {
+					console.log(error)
 				}
-			} catch (error) {
-				console.log(error)
-			}
-		},
-	})
-	const titleStep = [
-		{
-			icon: 'email',
-			heading: `Forgot password?`,
-			desc: "No worries, we'll sent you reset instruction",
-		},
-		{
-			icon: 'email',
-			heading: 'Email Verification',
-			desc: 'We have sent code to your email',
-		},
-		{
-			icon: 'email',
-			heading: 'Password Reset',
-			desc: 'Please enter your new password',
-		},
-	]
+			},
+		})
 
 	return (
 		<Verif
@@ -134,7 +110,9 @@ const ForgotPassword = () => {
 			</div>
 
 			<div className='relative flex gap-x-2 items-center'>
-				<span className='text-white mt-[16px]'>Don't have an account?</span>
+				<span className='text-white mt-[16px]'>
+					Don&apos;t have an account?
+				</span>
 				<LinkAuth
 					href='/register'
 					className='items-center text-white text-[#16AFF0]'

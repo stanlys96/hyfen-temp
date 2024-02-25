@@ -3,7 +3,6 @@ import React from 'react'
 export default function ButtonAuth({
 	className,
 	isDisabled,
-	isLoading,
 	typeButton,
 	buttonName,
 	handlerClick,

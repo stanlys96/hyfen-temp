@@ -1,9 +1,9 @@
 // import { resetPasswordRequest, resetPasswordVerify } from '@services'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import ButtonAuth from 'components/atoms/ButtonAuth'
-import ButtonV2 from 'components/atoms/ButtonV2'
-import InputOTP from 'components/atoms/InputOTP'
+import ButtonAuth from '../components/atoms/ButtonAuth'
+import ButtonV2 from '../components/atoms/ButtonV2'
+import InputOTP from '../components/atoms/InputOTP'
 // import { useSnackbar } from 'src/components/Snackbar'
 // import useTranslation from 'src/hooks/useTranslation'
 
@@ -49,7 +49,7 @@ const EnterCode = ({ changeStep, setUrl, email }) => {
 			// 	title: account.code_verified,
 			// 	description: account.code_verified_desc,
 			// })
-			setUrl(response.url)
+			setUrl('')
 			changeStep(2)
 		} catch (error) {
 			setisError(true)

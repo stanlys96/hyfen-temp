@@ -554,9 +554,9 @@ export default function HyfenRamp() {
 											onClick={async () => {
 												router.push('/login')
 												return
-												if (quoteLoading || disableSwap) return
-												console.log(sendTransaction)
-												sendTransaction()
+												// if (quoteLoading || disableSwap) return
+												// console.log(sendTransaction)
+												// sendTransaction()
 											}}
 											className={`w-full flex items-center gap-x-[12px] justify-center  text-center text-slate-900 ${
 												disableSwap

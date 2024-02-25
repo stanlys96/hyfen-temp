@@ -1,9 +1,9 @@
-import { Envelope } from 'components/Icons-V2'
-import HeadingAuth from 'components/molecules/HeadingAuth'
-import { Key } from 'components/Icons-V2/Hyfen-V2/Key'
+import { Envelope } from '../components/Icons-V2'
+import HeadingAuth from '../components/molecules/HeadingAuth'
+import { Key } from '../components/Icons-V2/Hyfen-V2/Key'
 import Head from 'next/head'
 import React from 'react'
-import { Wallet } from 'components/Icons-V2/Hyfen-V2/Wallet'
+import { Wallet } from '../components/Icons-V2/Hyfen-V2/Wallet'
 
 export default function Verif({
 	children,
