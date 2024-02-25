@@ -14,7 +14,7 @@ import {
 	useBalance,
 	useEnsName,
 	useEnsAvatar,
-	useSendTransaction,
+	// useSendTransaction,
 } from 'wagmi'
 import { chainData } from '../../utils/helper'
 import { fetcher } from '../../utils/axios'
