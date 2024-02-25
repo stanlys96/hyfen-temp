@@ -78,7 +78,7 @@ const ChangePassword = ({ url }) => {
 					name='password'
 					required={true}
 					type='password'
-					isError={!isValid}
+					isError={errors.password}
 					notes={errors.password}
 				/>
 				<FormInput
@@ -91,7 +91,7 @@ const ChangePassword = ({ url }) => {
 					name='password_confirmation'
 					required={true}
 					type='password'
-					isError={!isValid}
+					isError={errors.password_confirmation}
 					notes={errors.password_confirmation}
 				/>
 

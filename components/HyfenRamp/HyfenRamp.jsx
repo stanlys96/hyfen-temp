@@ -367,7 +367,14 @@ export default function HyfenRamp() {
 									</div>
 									<div className='mt-[50px]'>
 										<a
-											onClick={() => router.push('/login')}
+											onClick={() =>
+												router.push({
+													pathname: '/login',
+													query: {
+														method: currentCategory === 0 ? 'buy' : 'sell',
+													},
+												})
+											}
 											className='w-full flex items-center gap-x-[12px] justify-center header__download-button text-center text-slate-900 bg-white py-3 px-11 inline-block text-base font-bold cursor-pointer'
 										>
 											<span>Buy Now</span> <ArrowRightBlack />
@@ -552,7 +559,10 @@ export default function HyfenRamp() {
 									<div className='mt-[50px] flex justify-center items-center'>
 										<a
 											onClick={async () => {
-												router.push('/login')
+												router.push({
+													pathname: '/login',
+													query: { method: 'buy' },
+												})
 												return
 												// if (quoteLoading || disableSwap) return
 												// console.log(sendTransaction)

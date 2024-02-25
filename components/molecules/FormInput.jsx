@@ -11,6 +11,7 @@ import {
 import Lock from '../Icons-V2/Lock'
 import LockOff from '../Icons-V2/LockOff'
 import { RoninBig, Telegram, Discord } from '../Icons-V2/Hyfen-V2'
+import Phone from 'components/Icons-V2/Phone'
 
 export const FormInput = ({
 	label,
@@ -42,13 +43,15 @@ export const FormInput = ({
 			)}
 		>
 			{/* Label */}
-			<label
-				htmlFor={name}
-				className={['text-label text-white capitalize', classLabel].join(' ')}
-			>
-				{label}
-				{required && '*'}
-			</label>
+			{label && (
+				<label
+					htmlFor={name}
+					className={['text-label text-white capitalize', classLabel].join(' ')}
+				>
+					{label}
+					{required && '*'}
+				</label>
+			)}
 
 			{/* Input */}
 			<div className='relative w-full'>
@@ -127,6 +130,13 @@ export const FormInput = ({
 				{typeForm === 'roninWallet' && (
 					<span className='absolute top-3 left-4 select-none'>
 						<RoninBig />
+					</span>
+				)}
+
+				{/* Icon Phone */}
+				{typeForm === 'phone' && (
+					<span className='absolute top-4 left-4 select-none'>
+						<Phone />
 					</span>
 				)}
 

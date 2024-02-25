@@ -71,7 +71,7 @@ const EnterEmail = ({ changeStep, email, setEmail }) => {
 				name='email'
 				required={true}
 				type='email'
-				isError={!isValid}
+				isError={errors.email}
 				notes={errors.email}
 			/>
 

@@ -6,9 +6,12 @@ import ButtonAuth from '../components/atoms/ButtonAuth'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
+import { HeaderHyfen } from '../components/HeaderHyfen'
 
 const ForgotPassword = () => {
 	const router = useRouter()
+	const method = router.query.method
+	console.log(method)
 	const [url] = useState('')
 	const { values, errors, handleBlur, handleChange, handleSubmit, isValid } =
 		useFormik({
@@ -29,6 +32,11 @@ const ForgotPassword = () => {
 			}),
 			onSubmit: async (values) => {
 				console.log(values)
+				if (method === 'buy') {
+					router.replace('/buy-crypto')
+				} else {
+					router.replace('/sell-crypto')
+				}
 				try {
 					if (url) {
 						// await resetPasswordChange({
@@ -59,6 +67,7 @@ const ForgotPassword = () => {
 				'You need to login using a Hyfen account before proceeding to your transaction.'
 			}
 		>
+			<HeaderHyfen />
 			<div className='relative w-full mx-auto container max-w-2xl mt-14'>
 				<form
 					onSubmit={handleSubmit}
@@ -74,7 +83,7 @@ const ForgotPassword = () => {
 						name='email'
 						required={true}
 						type='email'
-						isError={!isValid}
+						isError={errors.email}
 						notes={errors.email}
 					/>
 					<FormInput
@@ -87,13 +96,13 @@ const ForgotPassword = () => {
 						name='password'
 						required={true}
 						type='password'
-						isError={!isValid}
+						isError={errors.password}
 						notes={errors.password}
 					/>
 					<div className='flex items-start justify-start w-full'>
 						<LinkAuth
 							href='/forgot'
-							className='text-start text-white text-[#888888]'
+							className='text-start text-[#9CA3AF]'
 							marginTop={false}
 						>
 							Forgot password?
@@ -114,10 +123,7 @@ const ForgotPassword = () => {
 				<span className='text-white mt-[16px]'>
 					Don&apos;t have an account?
 				</span>
-				<LinkAuth
-					href='/register'
-					className='items-center text-white text-[#16AFF0]'
-				>
+				<LinkAuth href='/register' className='items-center text-[#2EB4ED]'>
 					Register
 				</LinkAuth>
 			</div>

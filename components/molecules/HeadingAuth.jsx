@@ -11,7 +11,7 @@ export default function HeadingAuth({
 	desc2,
 }) {
 	return (
-		<div className={['relative mt-[32px]', className].join(' ')}>
+		<div className={['relative', className].join(' ')}>
 			<Heading1 className={classHeading} text={heading} />
 			<DescAuth className={classDesc} desc={desc} desc2={desc2} />
 		</div>

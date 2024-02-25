@@ -5,6 +5,7 @@ import EnterCode from '../components/ForgotPassword/Forms/EnterCode'
 import EnterEmail from '../components/ForgotPassword/Forms/EnterEmail'
 import LinkAuth from '../components/LinkAuth'
 import { IconArrowLeft } from '../components/Icons-V2'
+import { HeaderHyfen } from '../components/HeaderHyfen'
 
 const _renderStepContent = (
 	currentStep,
@@ -55,6 +56,7 @@ const ForgotPassword = () => {
 			icon={titleStep[currentStep]?.icon}
 			desc={titleStep[currentStep]?.desc}
 		>
+			<HeaderHyfen />
 			{_renderStepContent(
 				currentStep,
 				setCurrentStep,

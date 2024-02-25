@@ -6,6 +6,7 @@ import ButtonAuth from '../components/atoms/ButtonAuth'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
+import { HeaderHyfen } from '../components/HeaderHyfen'
 
 const ForgotPassword = () => {
 	const router = useRouter()
@@ -72,6 +73,7 @@ const ForgotPassword = () => {
 			// icon={titleStep[currentStep]?.icon}
 			desc={'Create an account'}
 		>
+			<HeaderHyfen />
 			<div className='relative w-full mx-auto container max-w-2xl mt-4'>
 				<form
 					onSubmit={handleSubmit}
@@ -87,7 +89,7 @@ const ForgotPassword = () => {
 						name='email'
 						required={true}
 						type='email'
-						isError={!isValid}
+						isError={errors.email}
 						notes={errors.email}
 					/>
 					<FormInput
@@ -100,7 +102,7 @@ const ForgotPassword = () => {
 						name='password'
 						required={true}
 						type='password'
-						isError={!isValid}
+						isError={errors.password}
 						notes={errors.password}
 					/>
 					<FormInput
@@ -129,10 +131,7 @@ const ForgotPassword = () => {
 
 			<div className='relative flex gap-x-2 items-center'>
 				<span className='text-white mt-[16px]'>Have an account?</span>
-				<LinkAuth
-					href='/login'
-					className='items-center text-white text-[#16AFF0]'
-				>
+				<LinkAuth href='/login' className='items-center text-[#2EB4ED]'>
 					Login
 				</LinkAuth>
 			</div>
