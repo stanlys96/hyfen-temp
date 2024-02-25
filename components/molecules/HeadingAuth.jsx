@@ -1,6 +1,6 @@
 import React from 'react'
-import DescAuth from '../components/atoms/DescAuth'
-import Heading1 from '../components/atoms/Heading1'
+import DescAuth from '../atoms/DescAuth'
+import Heading1 from '../atoms/Heading1'
 
 export default function HeadingAuth({
 	className,

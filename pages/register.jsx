@@ -43,6 +43,7 @@ const ForgotPassword = () => {
 					.trim('Confirm Password is required'),
 			}),
 			onSubmit: async (values) => {
+				console.log(values)
 				try {
 					if (url) {
 						// await resetPasswordChange({

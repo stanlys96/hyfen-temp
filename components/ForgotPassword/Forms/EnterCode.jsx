@@ -1,9 +1,9 @@
 // import { resetPasswordRequest, resetPasswordVerify } from '@services'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import ButtonAuth from '../components/atoms/ButtonAuth'
-import ButtonV2 from '../components/atoms/ButtonV2'
-import InputOTP from '../components/atoms/InputOTP'
+import ButtonAuth from '../../atoms/ButtonAuth'
+import ButtonV2 from '../../atoms/ButtonV2'
+import InputOTP from '../../atoms/InputOTP'
 // import { useSnackbar } from 'src/components/Snackbar'
 // import useTranslation from 'src/hooks/useTranslation'
 

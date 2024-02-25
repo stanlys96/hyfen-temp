@@ -2,7 +2,7 @@
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import React from 'react'
-import ButtonAuth from '../components/atoms/ButtonAuth'
+import ButtonAuth from '../../atoms/ButtonAuth'
 import { FormInput } from '../../molecules/FormInput'
 // import useTranslation from 'src/hooks/useTranslation'
 import * as yup from 'yup'

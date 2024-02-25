@@ -1,6 +1,6 @@
 import Verif from '../components/Layouts/Verif'
 import { useState } from 'react'
-import ChangePassword from '../../components/ForgotPassword/Forms/ChangePassword'
+import ChangePassword from '../components/ForgotPassword/Forms/ChangePassword'
 import EnterCode from '../components/ForgotPassword/Forms/EnterCode'
 import EnterEmail from '../components/ForgotPassword/Forms/EnterEmail'
 import LinkAuth from '../components/LinkAuth'

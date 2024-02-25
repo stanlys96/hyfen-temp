@@ -8,8 +8,8 @@ import {
 	FlagOff,
 	IconSearch,
 } from '../Icons-V2'
-import Lock from '../components/Icons-V2/Lock'
-import LockOff from '../components/Icons-V2/LockOff'
+import Lock from '../Icons-V2/Lock'
+import LockOff from '../Icons-V2/LockOff'
 import { RoninBig, Telegram, Discord } from '../Icons-V2/Hyfen-V2'
 
 export const FormInput = ({

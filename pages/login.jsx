@@ -28,6 +28,7 @@ const ForgotPassword = () => {
 					.required('Email is required'),
 			}),
 			onSubmit: async (values) => {
+				console.log(values)
 				try {
 					if (url) {
 						// await resetPasswordChange({
