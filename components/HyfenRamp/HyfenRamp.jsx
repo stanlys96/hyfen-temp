@@ -21,12 +21,14 @@ import { fetcher } from '../../utils/axios'
 import useSWR from 'swr'
 import axios from 'axios'
 import { Circles } from 'react-loader-spinner'
+import { useRouter } from 'next/router'
 
 const formatNumber = (n) => {
 	return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
 export default function HyfenRamp() {
+	const router = useRouter()
 	const [idrValue, setIdrValue] = useState('')
 	const [cryptoValue, setCryptoValue] = useState('')
 	const [showModal, setShowModal] = useState(false)
@@ -364,7 +366,10 @@ export default function HyfenRamp() {
 										</div>
 									</div>
 									<div className='mt-[50px]'>
-										<a className='w-full flex items-center gap-x-[12px] justify-center header__download-button text-center text-slate-900 bg-white py-3 px-11 inline-block text-base font-bold cursor-pointer'>
+										<a
+											onClick={() => router.push('/login')}
+											className='w-full flex items-center gap-x-[12px] justify-center header__download-button text-center text-slate-900 bg-white py-3 px-11 inline-block text-base font-bold cursor-pointer'
+										>
 											<span>Buy Now</span> <ArrowRightBlack />
 										</a>
 									</div>
@@ -547,6 +552,8 @@ export default function HyfenRamp() {
 									<div className='mt-[50px] flex justify-center items-center'>
 										<a
 											onClick={async () => {
+												router.push('/login')
+												return
 												if (quoteLoading || disableSwap) return
 												console.log(sendTransaction)
 												sendTransaction()
