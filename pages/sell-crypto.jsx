@@ -125,13 +125,13 @@ export default function BuyCrypto() {
 							</div>
 						</div>
 					</div>
-					<div className='relative h-full flex flex-col justify-start items-start'>
-						<div className='bg-[#1A1E48] p-[30px] rounded-[10px]'>
+					<div className='relative h-full  flex flex-col justify-start items-start'>
+						<div className='bg-[#1A1E48] p-[30px] w-[450px] rounded-[10px]'>
 							<p className='text-white text-[20px] text-bold'>
 								Account Information
 							</p>
 							<FormInput
-								classRoot='mt-5 w-[450px]'
+								classRoot='mt-5'
 								label={'Email Address'}
 								placeholder={'Email Address'}
 								typeForm='email'
