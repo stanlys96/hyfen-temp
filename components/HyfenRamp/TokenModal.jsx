@@ -4,18 +4,14 @@ import SearchWhite from '../Icons/SearchWhite'
 import Image from 'next/image'
 import { useChainId } from 'wagmi'
 
-function RampModal({
+function TokenModal({
 	currentSelectedToken,
 	setCurrentSelectedToken,
 	showModal,
 	setShowModal,
 	setAmount,
-	setToTokenValue,
-	setDisableSwap,
-	isSelectedToken,
-	isSwappedToken,
 	currentSwappedToken,
-	setCurrentSwappedToken,
+	setIdrValue,
 }) {
 	const chainId = useChainId()
 	const currentData = chainData.find((theData) => theData.chainId === chainId)
@@ -57,30 +53,18 @@ function RampModal({
 									<div
 										key={index}
 										onClick={() => {
-											if (isSelectedToken) {
-												setCurrentSelectedToken({
-													name: data.name,
-													imgUrl: data.imgUrl,
-													nickname: data.nickname,
-													decimals: data.decimals,
-													native: data.native,
-													address: data.contractAddress,
-												})
-											}
-											if (isSwappedToken) {
-												setCurrentSwappedToken({
-													name: data.name,
-													imgUrl: data.imgUrl,
-													nickname: data.nickname,
-													decimals: data.decimals,
-													native: data.native,
-													address: data.contractAddress,
-												})
-											}
+											setCurrentSelectedToken({
+												name: data.name,
+												imgUrl: data.imgUrl,
+												nickname: data.nickname,
+												decimals: data.decimals,
+												native: data.native,
+												address: data.contractAddress,
+												coingecko: data.coingecko,
+											})
 											setShowModal(false)
-											setToTokenValue(0)
 											setAmount(0)
-											setDisableSwap(true)
+											setIdrValue(0)
 										}}
 										className='cursor-pointer flex gap-x-4 items-center my-5'
 									>
@@ -106,4 +90,4 @@ function RampModal({
 	)
 }
 
-export default RampModal
+export default TokenModal

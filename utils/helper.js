@@ -13,6 +13,10 @@ import {
 	bscTestnet,
 } from 'viem/chains'
 
+export const formatNumber = (n) => {
+	return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
 export const validateEmail = (email) => {
 	return String(email)
 		.toLowerCase()
@@ -101,6 +105,26 @@ export const bnbTokenData = {
 	decimals: 1e18,
 }
 
+export const maviaTokenData = {
+	id: 9,
+	name: 'MAVIA',
+	imgUrl: '/images/mavia.png',
+	coingecko: 'heroes-of-mavia',
+	nickname: 'Mavia (MAVIA)',
+	native: false,
+	decimals: 1e18,
+}
+
+export const pixelsTokenData = {
+	id: 10,
+	name: 'PIXEL',
+	imgUrl: '/images/pixel.png',
+	coingecko: 'pixels',
+	nickname: 'Pixels (PIXEL)',
+	native: false,
+	decimals: 1e18,
+}
+
 export const supportedChains = [
 	mainnet.id,
 	// Goerli.chainId,
@@ -163,6 +187,14 @@ export const chainData = [
 			{
 				...wethTokenData,
 				contractAddress: 'C02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+			},
+			{
+				...maviaTokenData,
+				contractAddress: '24fcfc492c1393274b6bcd568ac9e225bec93584',
+			},
+			{
+				...pixelsTokenData,
+				contractAddress: '3429d03c6f7521aec737a0bbf2e5ddcef2c3ae31',
 			},
 		],
 	},
