@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import CurrencyInput from 'react-currency-input-field'
-import ArrowRightBlack from 'components/Icons/ArrowRightBlack'
+import ArrowRightBlack from '../Icons/ArrowRightBlack'
 import { Circles } from 'react-loader-spinner'
-import { formatNumber } from 'utils/helper'
-import { ArrowDown } from 'components/Icons'
+import { formatNumber } from '../../utils/helper'
+import { ArrowDown } from '../Icons'
 
 export const SwapComponent = ({
 	quoteLoading,

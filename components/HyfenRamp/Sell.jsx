@@ -1,8 +1,8 @@
 import CurrencyInput from 'react-currency-input-field'
 import Image from 'next/image'
-import Rupiah from 'components/Icons/Rupiah'
-import { ArrowDown } from 'components/Icons'
-import ArrowRightBlack from 'components/Icons/ArrowRightBlack'
+import Rupiah from '../Icons/Rupiah'
+import { ArrowDown } from '../Icons'
+import ArrowRightBlack from '../Icons/ArrowRightBlack'
 
 export const SellComponent = ({
 	idrValue,
