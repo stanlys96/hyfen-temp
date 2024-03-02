@@ -1,5 +1,4 @@
 import Verif from '../components/Layouts/Verif'
-import { useState } from 'react'
 import { FormInput } from '../components/molecules/FormInput'
 import LinkAuth from '../components/LinkAuth'
 import ButtonAuth from '../components/atoms/ButtonAuth'
