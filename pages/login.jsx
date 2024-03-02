@@ -7,16 +7,15 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import { HeaderHyfen } from '../components/HeaderHyfen'
-import { loginAxios } from 'utils/axios'
-import { useDispatch, useSelector } from 'react-redux'
-import { setToken, setUser } from 'src/stores/user-slice'
+import { loginAxios } from '../utils/axios'
+import { useDispatch } from 'react-redux'
+import { setToken, setUser } from '../src/stores/user-slice'
 import Swal from 'sweetalert2'
 
 const ForgotPassword = () => {
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const method = router.query.method
-	const [url] = useState('')
 	const { values, errors, handleBlur, handleChange, handleSubmit, isValid } =
 		useFormik({
 			initialValues: {

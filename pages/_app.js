@@ -11,7 +11,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createWeb3Modal } from '@web3modal/wagmi'
 import { defaultWagmiConfig } from '@web3modal/wagmi'
 import { Provider } from 'react-redux'
-import { store } from 'src/stores/store'
+import { store } from '../src/stores/store'
 
 const queryClient = new QueryClient()
 
