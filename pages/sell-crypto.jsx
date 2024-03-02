@@ -21,6 +21,8 @@ export default function BuyCrypto() {
 			password_confirmation: '',
 			email: '',
 			phoneCode: '',
+			phoneNumber: '',
+			accountNumber: '',
 		},
 		validationSchema: yup.object({
 			password: yup
@@ -28,7 +30,8 @@ export default function BuyCrypto() {
 				.required('Password is required')
 				.trim(`'${'Password is required'}'`)
 				.min(8, 'Must contain 8 characters'),
-			address: yup.string().required('Address is required'),
+			phoneNumber: yup.string().required('Phone Number is required'),
+			phoneCode: yup.string().required('Phone Code is required'),
 			email: yup.string().email('Invalid Email').required('Email is required'),
 			password_confirmation: yup
 				.string()
@@ -99,28 +102,15 @@ export default function BuyCrypto() {
 							<div className='flex gap-x-2 mt-2'>
 								<FormInput
 									classRoot='flex-1'
-									placeholder={'Phone Code'}
+									placeholder={'Input Phone Number'}
 									typeForm='phone'
-									value={values.phoneCode}
+									value={values.phoneNumber}
 									onBlur={handleBlur}
 									onChange={handleChange}
-									name='phone'
+									name='phoneNumber'
 									required={true}
-									isError={errors.phoneCode}
-									notes={errors.phoneCode}
-								/>
-								<FormInput
-									classRoot='flex-[2]'
-									withIcon={false}
-									placeholder={'Input phone number'}
-									// typeForm='email'
-									value={values.address}
-									onBlur={handleBlur}
-									onChange={handleChange}
-									name='address'
-									required={true}
-									isError={errors.address}
-									notes={errors.address}
+									isError={errors.phoneNumber}
+									notes={errors.phoneNumber}
 								/>
 							</div>
 						</div>

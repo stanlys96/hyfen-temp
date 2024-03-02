@@ -7,11 +7,15 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import { HeaderHyfen } from '../components/HeaderHyfen'
+import { loginAxios } from 'utils/axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { setToken, setUser } from 'src/stores/user-slice'
+import Swal from 'sweetalert2'
 
 const ForgotPassword = () => {
 	const router = useRouter()
+	const dispatch = useDispatch()
 	const method = router.query.method
-	console.log(method)
 	const [url] = useState('')
 	const { values, errors, handleBlur, handleChange, handleSubmit, isValid } =
 		useFormik({
@@ -30,28 +34,38 @@ const ForgotPassword = () => {
 					.email('Invalid Email')
 					.required('Email is required'),
 			}),
-			onSubmit: async (values) => {
-				console.log(values)
-				if (method === 'buy') {
-					router.replace('/buy-crypto')
-				} else {
-					router.replace('/sell-crypto')
-				}
+			onSubmit: async (formValues) => {
 				try {
-					if (url) {
-						// await resetPasswordChange({
-						// 	url,
-						// 	password: values.password,
-						// 	password_confirmation: values.password_confirmation,
-						// })
-
-						router.replace('/login')
-						// snackbar.success({
-						// 	title: account.password_has_been_reset,
-						// 	description: account.password_has_been_reset_desc,
-						// })
+					const theValues = {
+						...formValues,
+						device_id: 'device token',
+						device: '',
+					}
+					const data = await loginAxios.post('user/login', theValues)
+					const accessToken = data.data.meta.token
+					dispatch(setToken(accessToken))
+					dispatch(setUser(data.data.data))
+					if (method === 'buy') {
+						router.replace('/buy-crypto')
+					} else {
+						router.replace('/sell-crypto')
 					}
 				} catch (error) {
+					let message
+					switch (error.response.data) {
+						case 'user_not_found':
+							message = 'User not found!'
+							break
+						case 'E_INVALID_AUTH_PASSWORD: Password mis-match':
+						default:
+							message = 'Password mismatch!'
+							break
+					}
+					Swal.fire({
+						icon: 'info',
+						title: 'Oops...',
+						text: message,
+					})
 					console.log(error)
 				}
 			},
@@ -110,6 +124,9 @@ const ForgotPassword = () => {
 					</div>
 
 					<ButtonAuth
+						// handlerClick={() => {
+						// 	handleSubmit()
+						// }}
 						typeButton='submit'
 						isDisabled={!isValid}
 						className='w-[330px] mt-8'
