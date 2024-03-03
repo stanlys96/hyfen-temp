@@ -537,7 +537,7 @@ export default function BuyCrypto() {
 												text: 'Please connect your wallet!',
 											})
 										}
-										if (chainId !== 1) {
+										if (chainId !== 1 && chainId !== 42161) {
 											return Swal.fire({
 												icon: 'info',
 												title: 'Check Network',
