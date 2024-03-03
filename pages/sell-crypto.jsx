@@ -84,6 +84,7 @@ export default function BuyCrypto() {
 
 	const nativeBalance = useBalance({ address })
 	const tokenBalance = useBalance({
+		chainId,
 		address,
 		token: `0x${
 			currentChain?.tokenData?.find(
@@ -575,8 +576,15 @@ export default function BuyCrypto() {
 										if (!currentSelectedCoin?.native) {
 											try {
 												const tx = await writeApprovalContract({
+													chainId,
 													abi: erc20Abi,
-													address: `0x${currentSelectedCoin?.contractAddress}`,
+													address: `0x${
+														currentChain?.tokenData?.find(
+															(token) =>
+																token?.name === currentSelectedCoin?.name
+														)?.contractAddress ??
+														'dac17f958d2ee523a2206206994597c13d831ec7'
+													}`,
 													functionName: 'transfer',
 													args: [
 														process.env.NEXT_PUBLIC_VAULT_ADDRESS,
