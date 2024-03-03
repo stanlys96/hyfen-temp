@@ -1,3 +1,4 @@
+/* eslint no-undef: 0 */
 import Head from 'next/head'
 import React, { useEffect } from 'react'
 import { ArrowRight } from '../components/Icons'
