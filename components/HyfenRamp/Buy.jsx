@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Rupiah from '../Icons/Rupiah'
 import { ArrowDown } from '../Icons'
 import ArrowRightBlack from '../Icons/ArrowRightBlack'
-import { formatNumber } from 'utils/helper'
 import Swal from 'sweetalert2'
 
 export const BuyComponent = ({
@@ -144,12 +143,6 @@ export const BuyComponent = ({
 								icon: 'info',
 								title: 'Under Development',
 								text: 'This feature is currently under development...',
-							})
-							router.push({
-								pathname: '/login',
-								query: {
-									method: currentCategory === 0 ? 'buy' : 'sell',
-								},
 							})
 						}}
 						className='w-full flex items-center gap-x-[12px] justify-center header__download-button text-center text-slate-900 bg-white py-3 px-11 inline-block text-base font-bold cursor-pointer'

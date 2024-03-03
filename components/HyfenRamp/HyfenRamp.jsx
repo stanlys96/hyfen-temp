@@ -21,7 +21,7 @@ export default function HyfenRamp() {
 	const [swapCryptoValue, setSwapCryptoValue] = useState('')
 	const [showModal, setShowModal] = useState(false)
 	const [domLoaded, setDomLoaded] = useState(false)
-	const { address, isConnected } = useAccount()
+	const { address } = useAccount()
 	const [currentCategory, setCurrentCategory] = useState(1)
 	const [, setAmount] = useState(0)
 	// const [, setTo] = useState('')
@@ -64,8 +64,6 @@ export default function HyfenRamp() {
 		decimalValue: 6,
 	})
 
-	const { data: etherData } = useBalance({ address })
-
 	const nativeBalance = useBalance({ address })
 	const tokenBalance = useBalance({
 		address,
@@ -75,13 +73,7 @@ export default function HyfenRamp() {
 		}`,
 	})
 
-	const { disconnect } = useDisconnect()
-
 	const chainId = useChainId()
-
-	const currentNative = chainData
-		.find((data) => data.chainId === chainId)
-		?.tokenData.find((data) => data.native)
 
 	const { data } = useSWR(
 		`/markets?vs_currency=idr&ids=${currentSelectedCoin?.coingecko}`,

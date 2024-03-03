@@ -3,9 +3,9 @@ import Image from 'next/image'
 import Rupiah from '../Icons/Rupiah'
 import { ArrowDown } from '../Icons'
 import ArrowRightBlack from '../Icons/ArrowRightBlack'
-import { formatNumber } from 'utils/helper'
+import { formatNumber } from '../../utils/helper'
 import { useDispatch } from 'react-redux'
-import { setSelectedCoin } from 'src/stores/user-slice'
+import { setSelectedCoin } from '../../src/stores/user-slice'
 
 export const SellComponent = ({
 	idrValue,

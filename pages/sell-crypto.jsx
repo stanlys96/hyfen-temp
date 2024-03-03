@@ -14,9 +14,9 @@ import Swal from 'sweetalert2'
 import { ColorRing } from 'react-loader-spinner'
 import CurrencyInput from 'react-currency-input-field'
 import useSWR from 'swr'
-import { fetcher, axiosApi, axiosSecondary } from 'utils/axios'
+import { fetcher, axiosApi, axiosSecondary } from '../utils/axios'
 import { useSelector } from 'react-redux'
-import { chainData } from 'utils/helper'
+import { chainData } from '../utils/helper'
 import {
 	useBalance,
 	useAccount,
@@ -28,7 +28,7 @@ import erc20Abi from '../contracts/erc20-abi.json'
 // import seamlessAbi from '../contracts/seamless-abi.json'
 import { parseEther } from 'viem'
 import { useDispatch } from 'react-redux'
-import { setSelectedCoin } from 'src/stores/user-slice'
+import { setSelectedCoin } from '../src/stores/user-slice'
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms))
 
@@ -159,7 +159,7 @@ export default function BuyCrypto() {
 				bank_account_number: values.accountNumber,
 				phone_number: '12345678',
 			})
-			.then((res) => {
+			.then(() => {
 				// console.log(res.data);
 			})
 			.catch((e) => {
@@ -419,7 +419,7 @@ export default function BuyCrypto() {
 								withIcon={false}
 								value={accountName}
 								onBlur={handleBlur}
-								onChange={(e) => {}}
+								onChange={() => {}}
 								required={true}
 							/>
 						</div>

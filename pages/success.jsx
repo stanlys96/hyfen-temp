@@ -4,13 +4,12 @@ import { HeaderHyfen } from '../components/HeaderHyfen'
 import Success from '../components/Icons-V2/Success'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
-import { formatNumber } from 'utils/helper'
+import { formatNumber } from '../utils/helper'
 import Image from 'next/image'
 
 export default function BuyCrypto() {
 	const router = useRouter()
 	const { currentSelectedCoin } = useSelector((state) => state.user)
-	console.log(currentSelectedCoin)
 	return (
 		<>
 			<Head>

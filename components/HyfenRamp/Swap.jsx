@@ -179,10 +179,6 @@ export const SwapComponent = ({
 								title: 'Under Development',
 								text: 'This feature is currently under development...',
 							})
-							router.push({
-								pathname: '/login',
-								query: { method: 'buy' },
-							})
 							// if (quoteLoading || disableSwap) return
 							// sendTransaction()
 						}}
