@@ -6,7 +6,7 @@ import { bankTypes, eWallets, existBankData } from '../utils/helper'
 import Image from 'next/image'
 import useSWR from 'swr'
 import { fetcherFlip } from '../utils/axios'
-
+// asd
 function PaymentMethodModal({
 	showModal,
 	setShowModal,
