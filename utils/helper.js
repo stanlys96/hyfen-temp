@@ -35,6 +35,7 @@ export const ethTokenData = {
 	nickname: 'Ethereum',
 	native: false,
 	decimals: 1e18,
+	decimalValue: 18,
 }
 
 export const daiTokenData = {
@@ -45,6 +46,7 @@ export const daiTokenData = {
 	nickname: 'Dai',
 	native: false,
 	decimals: 1e18,
+	decimalValue: 18,
 }
 
 export const usdcTokenData = {
@@ -55,6 +57,7 @@ export const usdcTokenData = {
 	nickname: 'Coin (USDC)',
 	native: false,
 	decimals: 1e6,
+	decimalValue: 6,
 }
 
 export const usdtTokenData = {
@@ -65,6 +68,7 @@ export const usdtTokenData = {
 	nickname: 'Tether (USDT)',
 	native: false,
 	decimals: 1e6,
+	decimalValue: 6,
 }
 
 export const wbtcTokenData = {
@@ -75,6 +79,7 @@ export const wbtcTokenData = {
 	nickname: 'Wrapped (BTC)',
 	native: false,
 	decimals: 1e18,
+	decimalValue: 18,
 }
 
 export const wethTokenData = {
@@ -85,6 +90,7 @@ export const wethTokenData = {
 	nickname: 'Wrapped (ETH)',
 	native: false,
 	decimals: 1e18,
+	decimalValue: 18,
 }
 
 export const maticTokenData = {
@@ -94,6 +100,7 @@ export const maticTokenData = {
 	coingecko: 'matic-network',
 	native: false,
 	decimals: 1e18,
+	decimalValue: 18,
 }
 
 export const bnbTokenData = {
@@ -103,6 +110,7 @@ export const bnbTokenData = {
 	coingecko: 'binancecoin',
 	native: false,
 	decimals: 1e18,
+	decimalValue: 18,
 }
 
 export const maviaTokenData = {
@@ -113,6 +121,7 @@ export const maviaTokenData = {
 	nickname: 'Mavia (MAVIA)',
 	native: false,
 	decimals: 1e18,
+	decimalValue: 18,
 }
 
 export const pixelsTokenData = {
@@ -123,6 +132,7 @@ export const pixelsTokenData = {
 	nickname: 'Pixels (PIXEL)',
 	native: false,
 	decimals: 1e18,
+	decimalValue: 18,
 }
 
 export const supportedChains = [
@@ -181,14 +191,6 @@ export const chainData = [
 				contractAddress: 'dac17f958d2ee523a2206206994597c13d831ec7',
 			},
 			{
-				...wbtcTokenData,
-				contractAddress: '2260fac5e5542a773aa44fbcfedf7c193bc2c599',
-			},
-			{
-				...wethTokenData,
-				contractAddress: 'C02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-			},
-			{
 				...maviaTokenData,
 				contractAddress: '24fcfc492c1393274b6bcd568ac9e225bec93584',
 			},
@@ -224,14 +226,6 @@ export const chainData = [
 				...usdtTokenData,
 				contractAddress: 'fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
 			},
-			{
-				...wbtcTokenData,
-				contractAddress: '2f2a2543b76a4166549f7aab2e75bef0aefc5b0f',
-			},
-			{
-				...wethTokenData,
-				contractAddress: '82af49447d8a07e3bd95bd0d56f35241523fbab1',
-			},
 		],
 	},
 	{
@@ -260,14 +254,6 @@ export const chainData = [
 				...usdtTokenData,
 				contractAddress: 'c2132D05D31c914a87C6611C10748AEb04B58e8F',
 			},
-			{
-				...wbtcTokenData,
-				contractAddress: '1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
-			},
-			{
-				...wethTokenData,
-				contractAddress: '7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-			},
 		],
 	},
 	{
@@ -295,14 +281,6 @@ export const chainData = [
 			{
 				...usdtTokenData,
 				contractAddress: '94b008aa00579c1307b0ef2c499ad98a8ce58e58',
-			},
-			{
-				...wbtcTokenData,
-				contractAddress: '68f180fcce6836688e9084f035309e29bf0a2095',
-			},
-			{
-				...wethTokenData,
-				contractAddress: '4200000000000000000000000000000000000006',
 			},
 		],
 	},
@@ -363,14 +341,6 @@ export const chainData = [
 			{
 				...usdtTokenData,
 				contractAddress: 'fad6367E97217cC51b4cd838Cc086831f81d38C2',
-			},
-			{
-				...wbtcTokenData,
-				contractAddress: 'C04B0d3107736C32e19F1c62b2aF67BE61d63a05',
-			},
-			{
-				...wethTokenData,
-				contractAddress: 'B4FBF271143F4FBf7B91A5ded31805e42b2208d6',
 			},
 		],
 	},
@@ -584,22 +554,12 @@ export const bankTypes = [
 	{
 		id: 1,
 		name: 'Bank',
-		imgUrl: '/images/banks/banking.png',
+		imgUrl: '/img/banks/banking.png',
 	},
 	{
 		id: 2,
-		name: 'VA',
-		imgUrl: '/images/banks/va.png',
-	},
-	{
-		id: 3,
 		name: 'E-Wallet',
-		imgUrl: '/images/banks/ewallet.png',
-	},
-	{
-		id: 4,
-		name: 'Donation',
-		imgUrl: '/images/donation.png',
+		imgUrl: '/img/banks/ewallet.png',
 	},
 ]
 

@@ -5,6 +5,7 @@ const initialState = {
 	token: '',
 	name: '',
 	user: {},
+	currentSelectedCoin: {},
 }
 
 export const userSlice = createSlice({
@@ -19,6 +20,9 @@ export const userSlice = createSlice({
 		},
 		setUser: (state, action) => {
 			state.user = action.payload
+		},
+		setSelectedCoin: (state, action) => {
+			state.currentSelectedCoin = action.payload
 		},
 	},
 })
@@ -36,5 +40,6 @@ export const {
 	setKycResult,
 	removeKycResult,
 	setHasUnreadNotification,
+	setSelectedCoin,
 } = actions
 export default reducer

@@ -12,18 +12,23 @@ function TokenModal({
 	setAmount,
 	currentSwappedToken,
 	setIdrValue,
+	withSwapToken,
 }) {
 	const chainId = useChainId()
 	const currentData = chainData.find((theData) => theData.chainId === chainId)
 	function filterListData(obj) {
-		return (
-			obj.name !== currentSelectedToken.name &&
-			obj.name !== currentSwappedToken.name
-		)
+		if (withSwapToken) {
+			return (
+				obj.name !== currentSelectedToken.name &&
+				obj.name !== currentSwappedToken.name
+			)
+		} else {
+			return obj.name !== currentSelectedToken.name
+		}
 	}
 
 	return (
-		<div className={`${showModal ? 'block' : 'hidden'} md:w-full`}>
+		<div className={`${showModal ? 'block' : 'hidden'} md:w-full z-1000`}>
 			<div
 				className='z-50 bg-[#828282]/50 dark:bg-[#101016CC] backdrop-blur-sm w-full sm:p-5 md:p-10 fixed top-0 left-0 items-center justify-center flex h-full'
 				style={{ opacity: 1 }}
@@ -53,13 +58,14 @@ function TokenModal({
 									<div
 										key={index}
 										onClick={() => {
+											console.log(data, '<<< DATA')
 											setCurrentSelectedToken({
 												name: data.name,
 												imgUrl: data.imgUrl,
 												nickname: data.nickname,
 												decimals: data.decimals,
 												native: data.native,
-												address: data.contractAddress,
+												contractAddress: data.contractAddress,
 												coingecko: data.coingecko,
 											})
 											setShowModal(false)

@@ -41,8 +41,8 @@ const EcoSystemBox = ({
 					<Image
 						src={icon}
 						className='block py-2'
-						width='100%'
-						height='100%'
+						width={250}
+						height={250}
 						alt='eco-systems'
 						layout='responsive'
 						quality={100}

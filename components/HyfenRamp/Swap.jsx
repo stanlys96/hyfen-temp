@@ -4,6 +4,7 @@ import ArrowRightBlack from '../Icons/ArrowRightBlack'
 import { Circles } from 'react-loader-spinner'
 import { formatNumber } from '../../utils/helper'
 import { ArrowDown } from '../Icons'
+import Swal from 'sweetalert2'
 
 export const SwapComponent = ({
 	quoteLoading,
@@ -173,11 +174,15 @@ export const SwapComponent = ({
 				<div className='mt-[50px] flex justify-center items-center'>
 					<a
 						onClick={async () => {
+							return Swal.fire({
+								icon: 'info',
+								title: 'Under Development',
+								text: 'This feature is currently under development...',
+							})
 							router.push({
 								pathname: '/login',
 								query: { method: 'buy' },
 							})
-							return
 							// if (quoteLoading || disableSwap) return
 							// sendTransaction()
 						}}

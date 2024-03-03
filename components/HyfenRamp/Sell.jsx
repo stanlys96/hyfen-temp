@@ -3,6 +3,9 @@ import Image from 'next/image'
 import Rupiah from '../Icons/Rupiah'
 import { ArrowDown } from '../Icons'
 import ArrowRightBlack from '../Icons/ArrowRightBlack'
+import { formatNumber } from 'utils/helper'
+import { useDispatch } from 'react-redux'
+import { setSelectedCoin } from 'src/stores/user-slice'
 
 export const SellComponent = ({
 	idrValue,
@@ -14,7 +17,10 @@ export const SellComponent = ({
 	data,
 	router,
 	currentSelectedCoin,
+	insufficientBalance,
+	usedBalance,
 }) => {
+	const dispatch = useDispatch()
 	return (
 		<div className='flex justify-center items-center'>
 			<div className='w-[330px] md:w-[340px] pt-[30px]'>
@@ -69,11 +75,10 @@ export const SellComponent = ({
 							<ArrowDown className='fill-current h-4 ' />
 						</div>
 					</div>
-
 					<p className='text-[#FFFFFF4D] italic text-[14px] mt-[10px]'>
-						Minimum Deposit: 10,000 IDR
+						Balance: {usedBalance.toFixed(5)} {currentSelectedCoin?.name}
 					</p>
-					<p className='mb-3 mt-[20px]'>You get</p>
+					<p className='mb-3 mt-[10px]'>You get</p>
 					<div className='w-full h-[56px] rounded-[11px] px-[12px] bg-[#43466D26] border border-[#FFFFFF4D] flex justify-between items-center'>
 						<div className='border-r border-[#FFFFFF4D] h-full'>
 							<CurrencyInput
@@ -118,30 +123,59 @@ export const SellComponent = ({
 							<ArrowDown className='fill-current h-4 ' />
 						</div>
 					</div>
+					<p className='text-[#FFFFFF4D] italic text-[14px] mt-[10px]'>
+						Minimum Deposit: 10,000 IDR
+					</p>
 					<div className='flex justify-between mt-[15px]'>
 						<p className='text-[16px]'>Summary:</p>
 						<p className='text-[16px]'>Quote updates in 7s</p>
 					</div>
 					<div className='border border-[#FFFFFF4D] px-[12px] rounded-[11px] h-[56px] flex justify-between items-center mt-[15px]'>
 						<p className='font-normal'>
-							You get <span className='the-bold'>1000 SLP</span>
+							You get{' '}
+							<span className='the-bold'>
+								{formatNumber(idrValue || '0') || 0} IDR
+							</span>
 						</p>
 						<ArrowDown className='fill-current h-4 ' />
 					</div>
 				</div>
 				<div className='mt-[50px]'>
 					<a
-						onClick={() =>
+						onClick={() => {
+							if (insufficientBalance) return
+							dispatch(
+								setSelectedCoin({
+									cryptoValue: cryptoValue,
+									idrValue: idrValue,
+									coingecko: currentSelectedCoin.coingecko,
+									name: currentSelectedCoin.name,
+									imgUrl: currentSelectedCoin.imgUrl,
+									nickname: currentSelectedCoin.nickname,
+									decimals: currentSelectedCoin.decimals,
+									native: currentSelectedCoin.native,
+									contractAddress: currentSelectedCoin.contractAddress,
+								})
+							)
 							router.push({
 								pathname: '/login',
 								query: {
 									method: currentCategory === 0 ? 'buy' : 'sell',
 								},
 							})
-						}
-						className='w-full flex items-center gap-x-[12px] justify-center header__download-button text-center text-slate-900 bg-white py-3 px-11 inline-block text-base font-bold cursor-pointer'
+						}}
+						className={`${
+							insufficientBalance
+								? 'cursor-not-allowed bg-[#712F30] text-white border border-[#712F30] header__download-button-disabled'
+								: 'cursor-pointer bg-white text-slate-900 border-white header__download-button'
+						} w-full flex items-center gap-x-[12px] justify-center text-center py-3 px-11 inline-block text-base font-bold`}
 					>
-						<span>Buy Now</span> <ArrowRightBlack />
+						<span>
+							{insufficientBalance
+								? `Insufficient ${currentSelectedCoin?.name}`
+								: 'Buy Now'}
+						</span>{' '}
+						<ArrowRightBlack fill={insufficientBalance ? 'white' : '#000'} />
 					</a>
 				</div>
 			</div>

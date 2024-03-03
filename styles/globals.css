@@ -208,7 +208,7 @@ input[type='number'] {
 }
 
 .header__download-button-disabled {
-	border: 1px solid #888888;
+	border: 1px solid #712f30;
 	box-sizing: border-box;
 	border-radius: 100px;
 	transition: all 0.25s ease-in;

@@ -7,6 +7,19 @@ export const axiosCustom = axios.create({
 
 export const fetcher = (url) => axiosCustom.get(url).then((res) => res)
 
+export const axiosApi = axios.create({
+	baseURL: process.env.NEXT_PUBLIC_AXIOS_API,
+	headers: {
+		Authorization: process.env.NEXT_PUBLIC_STRAPI_TOKEN,
+	},
+})
+
+export const axiosSecondary = axios.create({
+	baseURL: process.env.NEXT_PUBLIC_AXIOS_SECONDARY,
+})
+
+export const fetcherFlip = (url) => axiosSecondary.get(url).then((res) => res)
+
 export const loginAxios = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_BASE_API,
 	withCredentials: true,
@@ -14,6 +27,8 @@ export const loginAxios = axios.create({
 		'content-type': 'application/json',
 	},
 })
+
+export const fetcherStrapi = (url) => axiosApi.get(url).then((res) => res)
 
 loginAxios.interceptors.request.use(
 	(config) => {
@@ -46,3 +61,9 @@ loginAxios.interceptors.request.use(
 // 		return Promise.reject(error)
 // 	}
 // )
+
+axiosSecondary.interceptors.request.use((requestConfig) => {
+	requestConfig.headers['Authorization'] = process.env.NEXT_PUBLIC_FLIP_AUTH
+
+	return requestConfig
+})

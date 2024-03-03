@@ -3,14 +3,7 @@ import Image from 'next/image'
 import { Fade } from 'react-reveal'
 import Link from 'next/link'
 import RampModal from './RampModal'
-import {
-	useAccount,
-	useChainId,
-	useDisconnect,
-	useBalance,
-	useEnsName,
-	useEnsAvatar,
-} from 'wagmi'
+import { useAccount, useChainId, useDisconnect, useBalance } from 'wagmi'
 import { chainData } from '../../utils/helper'
 import { fetcher } from '../../utils/axios'
 import useSWR from 'swr'
@@ -47,6 +40,7 @@ export default function HyfenRamp() {
 		nickname: 'Tether (USDT)',
 		address: 'dac17f958d2ee523a2206206994597c13d831ec7',
 		coingecko: 'tether',
+		decimalValue: 6,
 	})
 
 	const [currentSelectedCoin, setCurrenctSelectedCoin] = useState({
@@ -57,6 +51,7 @@ export default function HyfenRamp() {
 		nickname: 'Tether (USDT)',
 		address: 'dac17f958d2ee523a2206206994597c13d831ec7',
 		coingecko: 'tether',
+		decimalValue: 6,
 	})
 
 	const [currentSwappedToken, setCurrentSwappedToken] = useState({
@@ -66,9 +61,19 @@ export default function HyfenRamp() {
 		decimals: 1e6,
 		nickname: 'Coin (USDC)',
 		address: 'A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+		decimalValue: 6,
 	})
 
 	const { data: etherData } = useBalance({ address })
+
+	const nativeBalance = useBalance({ address })
+	const tokenBalance = useBalance({
+		address,
+		token: `0x${
+			currentSelectedCoin?.contractAddress ??
+			'dac17f958d2ee523a2206206994597c13d831ec7'
+		}`,
+	})
 
 	const { disconnect } = useDisconnect()
 
@@ -78,35 +83,16 @@ export default function HyfenRamp() {
 		.find((data) => data.chainId === chainId)
 		?.tokenData.find((data) => data.native)
 
-	const { data: ensName } = useEnsName({
-		address,
-	})
-
-	const ensAvatar = useEnsAvatar({
-		name: ensName,
-	})
-
 	const { data } = useSWR(
 		`/markets?vs_currency=idr&ids=${currentSelectedCoin?.coingecko}`,
 		fetcher
 	)
 
-	// async function get1inchSwap() {
-	// 	const tx = await axios.post('https://invoker.cloud/api/handle-swap-old', {
-	// 		chainId,
-	// 		fromToken: currentSelectedToken?.address,
-	// 		toToken: currentSwappedToken?.address,
-	// 		amount: amount * currentSelectedToken?.decimals,
-	// 		address,
-	// 		slippage: 1,
-	// 	})
-	// 	console.log(tx, '<<< TX')
-	// 	console.log(tx.data)
-	// 	setTo(tx.data.tx.to)
-	// 	setTxData(tx.data.tx.data)
-	// 	setValueExchangedDecimals(Number(`1E${tx.data.toToken.decimals}`))
-	// 	setValueExchanged(tx.data.toTokenAmount)
-	// }
+	const usedBalance = currentSelectedCoin?.native
+		? parseFloat(nativeBalance?.data?.formatted)
+		: parseFloat(tokenBalance?.data?.formatted)
+
+	const insufficientBalance = parseFloat(cryptoValue ?? '0') > usedBalance
 
 	useEffect(() => {
 		setDomLoaded(true)
@@ -169,6 +155,7 @@ export default function HyfenRamp() {
 				setAmount={setCryptoValue}
 				currentSwappedToken={currentSwappedToken}
 				setIdrValue={setIdrValue}
+				withSwapToken={currentCategory === 2}
 			/>
 			<div className='bg-ramp relative md:h-[120vh] w-[100vw]'>
 				<div className='pt-[100px] flex md:flex-row flex-col justify-center items-center'>
@@ -179,37 +166,9 @@ export default function HyfenRamp() {
 						never made easy
 					</span>
 				</div>
-				{!isConnected ? (
-					<div className='flex justify-center items-center mt-2'>
-						<w3m-button />
-					</div>
-				) : (
-					<div className='w-full flex justify-center items-center mt-2'>
-						<button
-							onClick={() => {
-								disconnect()
-							}}
-							className={`flex items-center gap-x-1 'bg-[#333333]' px-4 py-2 bg-blue font-semibold transition duration-500 rounded-[12px] sm:text-lg`}
-						>
-							<span className='text-gradient-2'>{`${etherData?.formatted.slice(
-								0,
-								7
-							)} ${currentNative?.name} ${
-								!ensName
-									? address.slice(0, 5) +
-									  '...' +
-									  address.slice(address.length - 4)
-									: ensName
-							}`}</span>
-							{ensAvatar?.data && (
-								<img
-									className='w-[30px] h-[30px] rounded-full'
-									src={ensAvatar?.data ?? ''}
-								/>
-							)}
-						</button>
-					</div>
-				)}
+				<div className='flex justify-center items-center mt-2'>
+					<w3m-button />
+				</div>
 				<div className='flex md:flex-row flex-col justify-center items-center md:items-end mt-[20px] md:gap-x-[100px] w-full mx-auto'>
 					<div className='relative mt-8 md:block hidden'>
 						<Fade top delay={200}>
@@ -267,6 +226,7 @@ export default function HyfenRamp() {
 								data={data}
 								router={router}
 								currentSelectedCoin={currentSelectedCoin}
+								usedBalance={usedBalance}
 							/>
 						)}
 						{currentCategory === 1 && (
@@ -280,6 +240,8 @@ export default function HyfenRamp() {
 								data={data}
 								router={router}
 								currentSelectedCoin={currentSelectedCoin}
+								insufficientBalance={insufficientBalance}
+								usedBalance={usedBalance}
 							/>
 						)}
 						{currentCategory === 2 && (

@@ -74,7 +74,7 @@ export const FormInput = ({
 					className={[
 						`relative w-full ${
 							withIcon ? 'pl-12' : ''
-						} p-[16px] focus:outline-none focus:ring-0 focus:border-app-purple/50 rounded-[10px] text-label text-white placeholder:text-app-shade placeholder:text-label bg-app-background border border-app-disabled/20 placeholder:capitalize`,
+						} p-[16px] focus:outline-none focus:ring-0 focus:border-app-purple/50 rounded-[10px] text-label text-white bg-app-background border border-app-disabled/20 placeholder:capitalize`,
 						disabled &&
 							'cursor-not-allowed disabled:opacity-60 bg-app-shade/50',
 						isError && 'border-app-red',
@@ -121,7 +121,7 @@ export const FormInput = ({
 
 				{/* Icon Search */}
 				{typeForm === 'search' && (
-					<span className='absolute top-4 left-4 select-none'>
+					<span className='absolute top-5 left-4 select-none'>
 						<IconSearch className='text-app-shade' />
 					</span>
 				)}
