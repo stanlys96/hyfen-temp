@@ -58,7 +58,6 @@ function TokenModal({
 									<div
 										key={index}
 										onClick={() => {
-											console.log(data, '<<< DATA')
 											setCurrentSelectedToken({
 												name: data.name,
 												imgUrl: data.imgUrl,

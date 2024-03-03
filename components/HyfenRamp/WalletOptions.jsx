@@ -3,7 +3,6 @@ import { useConnect } from 'wagmi'
 
 export function WalletOptions() {
 	const { connectors, connect } = useConnect()
-	console.log(connectors, '<<<')
 	return (
 		<div className='flex justify-center items-center gap-x-4 mt-2 z-100'>
 			{connectors.map((connector) => (
