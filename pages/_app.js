@@ -80,7 +80,7 @@ const metadata = {
 	name: 'Hyfen',
 	description: 'Hyfen',
 	url: 'https://hyfen.gg', // origin must match your domain & subdomain
-	icons: ['https://avatars.githubusercontent.com/u/37784886'],
+	icons: [process.env.NEXT_PUBLIC_ICON_URL],
 }
 
 const chains = [mainnet, arbitrum]

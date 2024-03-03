@@ -53,7 +53,9 @@ export default function BuyCrypto() {
 		currentSelectedCoin?.cryptoValue ?? '0'
 	)
 	const { address, chainId } = useAccount()
-	const currentChain = chainData.find((data) => data.chainId === chainId)
+	const [currentChain, setCurrentChain] = useState(
+		chainData.find((data) => data.chainId === chainId)
+	)
 
 	const {
 		isPending: isPendingApproval,
@@ -84,8 +86,9 @@ export default function BuyCrypto() {
 	const tokenBalance = useBalance({
 		address,
 		token: `0x${
-			currentSelectedCoin?.contractAddress ??
-			'dac17f958d2ee523a2206206994597c13d831ec7'
+			currentChain?.tokenData?.find(
+				(token) => token?.name === currentSelectedCoin?.name
+			)?.contractAddress ?? 'dac17f958d2ee523a2206206994597c13d831ec7'
 		}`,
 	})
 
@@ -266,6 +269,11 @@ export default function BuyCrypto() {
 		}
 	}, [coinGeckoData])
 
+	useEffect(() => {
+		console.log(chainId)
+		setCurrentChain(chainData.find((data) => data.chainId === chainId))
+	}, [chainId])
+
 	// useEffect(() => {
 	// 	if (approvalSuccess) {
 	// 		writeCoinContract({
@@ -288,7 +296,7 @@ export default function BuyCrypto() {
 			<Head>
 				<title>Hyfen GG | Buy Crypto</title>
 			</Head>
-			<main className='relative h-screen max-h-full w-full bg-app-background'>
+			<main className='relative h-screen h-full pb-[200px] w-full bg-app-background'>
 				{/* Container */}
 				<HeaderHyfen withWallet isLoading={waitApproval} />
 				<PaymentMethodModal
@@ -297,7 +305,7 @@ export default function BuyCrypto() {
 					setSelectedProvider={setSelectedProvider}
 					resetValue={resetValue}
 				/>
-				<div className='relative h-full max-w-7xl container mx-auto flex gap-x-10 justify-center items-center h-full pt-[13vh]'>
+				<div className='relative h-full w-full container mx-auto flex md:flex-row flex-col gap-y-5 gap-x-10 justify-center items-center h-full pt-[13vh]'>
 					{/* Container content */}
 					<div className='relative h-full flex flex-col justify-start items-center'>
 						<div className='bg-[#1A1E48] p-[30px] rounded-[10px]'>
