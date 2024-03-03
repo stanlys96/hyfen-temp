@@ -11,9 +11,7 @@ export const BuyComponent = ({
 	setCryptoValue,
 	setShowModal,
 	cryptoValue,
-	currentCategory,
 	data,
-	router,
 	currentSelectedCoin,
 	usedBalance,
 }) => {

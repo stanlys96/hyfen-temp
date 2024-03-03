@@ -20,7 +20,6 @@ export const SwapComponent = ({
 	setCurrentSwappedToken,
 	currentSwappedToken,
 	disableSwap,
-	router,
 	toTokenValue,
 	setToTokenValue,
 }) => {
