@@ -5,7 +5,7 @@ import Head from 'next/head'
 import Script from 'next/script'
 import { WagmiProvider } from 'wagmi'
 // import { arbitrum, bsc, optimism, polygon, mainnet } from 'viem/chains'
-import { mainnet, arbitrum } from 'wagmi/chains'
+import { mainnet, arbitrum, optimism, bsc, polygon } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 // import { metaMask, injected, walletConnect } from 'wagmi/connectors'
 import { createWeb3Modal } from '@web3modal/wagmi'
@@ -83,7 +83,7 @@ const metadata = {
 	icons: [process.env.NEXT_PUBLIC_ICON_URL],
 }
 
-const chains = [mainnet, arbitrum]
+const chains = [mainnet, arbitrum, optimism, polygon]
 const config = defaultWagmiConfig({
 	chains,
 	projectId: PROJECT_ID,

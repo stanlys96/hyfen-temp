@@ -66,6 +66,7 @@ function TokenModal({
 												native: data.native,
 												contractAddress: data.contractAddress,
 												coingecko: data.coingecko,
+												decimalValue: data.decimalValue,
 											})
 											setShowModal(false)
 											setAmount(0)

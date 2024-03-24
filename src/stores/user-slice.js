@@ -6,6 +6,31 @@ const initialState = {
 	name: '',
 	user: {},
 	currentSelectedCoin: {},
+	verificationToken: '',
+	password: '',
+	accessToken: '',
+	method: '',
+	currentSelectedOnrampCoin: {
+		idrValue: '',
+		logo: '',
+		network: '',
+		priceId: '',
+		cryptoName: '',
+		id: '',
+	},
+	onrampResult: {
+		network: '',
+		cryptoName: '',
+		cryptoValue: '',
+		idrValue: '',
+		bankName: '',
+		bankLogo: '',
+		address: '',
+		phoneNumber: '',
+		vaNumber: '',
+		group: '',
+		cryptoImg: '',
+	},
 }
 
 export const userSlice = createSlice({
@@ -24,6 +49,24 @@ export const userSlice = createSlice({
 		setSelectedCoin: (state, action) => {
 			state.currentSelectedCoin = action.payload
 		},
+		setVerificationToken: (state, action) => {
+			state.verificationToken = action.payload
+		},
+		setPassword: (state, action) => {
+			state.password = action.payload
+		},
+		setAccessToken: (state, action) => {
+			state.accessToken = action.payload
+		},
+		setMethod: (state, action) => {
+			state.method = action.payload
+		},
+		setCurrentSelectedOnrampCoin: (state, action) => {
+			state.currentSelectedOnrampCoin = action.payload
+		},
+		setOnrampResult: (state, action) => {
+			state.onrampResult = action.payload
+		},
 	},
 })
 
@@ -41,5 +84,12 @@ export const {
 	removeKycResult,
 	setHasUnreadNotification,
 	setSelectedCoin,
+	setVerificationToken,
+	setEmail,
+	setPassword,
+	setAccessToken,
+	setMethod,
+	setCurrentSelectedOnrampCoin,
+	setOnrampResult,
 } = actions
 export default reducer

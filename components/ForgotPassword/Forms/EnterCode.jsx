@@ -6,13 +6,21 @@ import ButtonV2 from '../../atoms/ButtonV2'
 import InputOTP from '../../atoms/InputOTP'
 // import { useSnackbar } from 'src/components/Snackbar'
 // import useTranslation from 'src/hooks/useTranslation'
+import { axiosBackend } from '../../../utils/axios'
+import { useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
+import { setAccessToken } from '../../../src/stores/user-slice'
 
-const EnterCode = ({ changeStep, setUrl, email }) => {
+const EnterCode = ({ changeStep, setUrl, email, showCounter = true }) => {
 	// const { account } = useTranslation()
+	const dispatch = useDispatch()
+	const router = useRouter()
 	const [otp, setOtp] = useState('')
 	const onChange = (value) => setOtp(value)
 	const [counter, setCounter] = useState(60)
 	const [isError, setisError] = useState(false)
+	const { verificationToken, password } = useSelector((state) => state.user)
 
 	// const snackbar = useSnackbar()
 
@@ -39,39 +47,42 @@ const EnterCode = ({ changeStep, setUrl, email }) => {
 		changeStep(2)
 		e.preventDefault()
 		setisError(false)
+		console.log(otp)
+
 		try {
-			// const response = await resetPasswordVerify({
-			// 	code: otp,
-			// 	email,
-			// })
-
-			// snackbar.success({
-			// 	title: account.code_verified,
-			// 	description: account.code_verified_desc,
-			// })
-			setUrl('')
-			changeStep(2)
+			const result = await axiosBackend.post('/auth/verify-login', {
+				verificationToken,
+				otp,
+			})
+			console.log(result)
+			if (result?.data?.message === 'ok') {
+				dispatch(setAccessToken(result?.data?.data?.accessToken))
+				router.replace('/login')
+			}
 		} catch (error) {
-			setisError(true)
-			if (axios.isAxiosError(error)) {
-				if (error.response?.data === 'verification_invalid') {
-					// snackbar.error({
-					// 	title: account.wrong_code,
-					// 	description: account.wrong_code_desc,
-					// })
+			console.log(error?.response?.data?.message)
+			if (
+				error?.response?.data?.message === 'jwt expired' ||
+				error?.response?.data?.message ===
+					'body/verificationToken must NOT have fewer than 1 characters'
+			) {
+				try {
+					console.log(email, password)
+					const result = await axiosBackend.post('/auth/login', {
+						email,
+						password,
+					})
+					const otpResult = await axiosBackend.post('/auth/verify-login', {
+						verificationToken: result?.data?.data?.verificationToken,
+						otp,
+					})
+					console.log(otpResult, '<<< OTP RESULT')
+				} catch (e) {
+					console.log(e?.response?.data?.message)
+					setisError(true)
 				}
-
-				if (error.response?.data === 'verification_expired') {
-					// snackbar.error({
-					// 	title: account.code_expired,
-					// 	description: account.code_expired_desc,
-					// })
-				}
-
-				// snackbar.error({
-				// 	title: account.something_went_wrong,
-				// 	description: account.try_later,
-				// })
+			} else {
+				setisError(true)
 			}
 		}
 	}
@@ -106,39 +117,45 @@ const EnterCode = ({ changeStep, setUrl, email }) => {
 					onChange={onChange}
 				/>
 
-				<div className='relative py-2 '>
-					<p className='text-sm text-app-red tracking-wide'>Code is wrong</p>
-				</div>
+				{isError && (
+					<div className='relative py-2 '>
+						<p className='text-sm text-app-red tracking-wide'>Code is wrong</p>
+					</div>
+				)}
 
 				<ButtonAuth
 					typeButton='submit'
 					isDisabled={otp.length < 6}
-					className='w-[330px]'
+					className='w-[330px] mt-4'
 				>
 					Verify
 				</ButtonAuth>
 			</form>
 
-			<div className='realative text-center flex flex-col justify-center items-center'>
-				<div className='text-white/50'>Did not receive email?</div>
-				{counter !== 0 ? (
-					<div className='inline-block'>
-						<span className='text-center text-white/50'>Resend email in:</span>
-						<span className='text-center  text-white/50 ml-1'>
-							00:{counter < 10 ? `0${counter}` : counter}
-						</span>
-					</div>
-				) : (
-					<ButtonV2
-						onClick={() => onResend()}
-						type='button'
-						variant='primary'
-						className='mt-2'
-					>
-						Resend Email
-					</ButtonV2>
-				)}
-			</div>
+			{showCounter && (
+				<div className='realative text-center flex flex-col justify-center items-center'>
+					<div className='text-white/50'>Did not receive email?</div>
+					{counter !== 0 ? (
+						<div className='inline-block'>
+							<span className='text-center text-white/50'>
+								Resend email in:
+							</span>
+							<span className='text-center  text-white/50 ml-1'>
+								00:{counter < 10 ? `0${counter}` : counter}
+							</span>
+						</div>
+					) : (
+						<ButtonV2
+							onClick={() => onResend()}
+							type='button'
+							variant='primary'
+							className='mt-2'
+						>
+							Resend Email
+						</ButtonV2>
+					)}
+				</div>
+			)}
 		</div>
 	)
 }

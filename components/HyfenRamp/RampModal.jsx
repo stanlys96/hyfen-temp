@@ -64,7 +64,8 @@ function RampModal({
 													nickname: data.nickname,
 													decimals: data.decimals,
 													native: data.native,
-													address: data.contractAddress,
+													contractAddress: data.contractAddress,
+													decimalValue: data.decimalValue,
 												})
 											}
 											if (isSwappedToken) {
@@ -75,6 +76,7 @@ function RampModal({
 													decimals: data.decimals,
 													native: data.native,
 													address: data.contractAddress,
+													decimalValue: data.decimalValue,
 												})
 											}
 											setShowModal(false)

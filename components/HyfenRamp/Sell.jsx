@@ -5,7 +5,7 @@ import { ArrowDown } from '../Icons'
 import ArrowRightBlack from '../Icons/ArrowRightBlack'
 import { formatNumber } from '../../utils/helper'
 import { useDispatch } from 'react-redux'
-import { setSelectedCoin } from '../../src/stores/user-slice'
+import { setMethod, setSelectedCoin } from '../../src/stores/user-slice'
 
 export const SellComponent = ({
 	idrValue,
@@ -157,11 +157,9 @@ export const SellComponent = ({
 									contractAddress: currentSelectedCoin.contractAddress,
 								})
 							)
+							dispatch(setMethod('sell'))
 							router.push({
 								pathname: '/login',
-								query: {
-									method: currentCategory === 0 ? 'buy' : 'sell',
-								},
 							})
 						}}
 						className={`${

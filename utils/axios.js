@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { store } from 'src/stores/store'
 
 export const axiosCustom = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_AXIOS_CUSTOM,
@@ -18,6 +17,13 @@ export const axiosSecondary = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_AXIOS_SECONDARY,
 })
 
+export const axiosBackend = axios.create({
+	baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
+	headers: {
+		'x-static-token': process.env.NEXT_PUBLIC_BACKEND_KEY,
+	},
+})
+
 export const fetcherFlip = (url) => axiosSecondary.get(url).then((res) => res)
 
 export const loginAxios = axios.create({
@@ -27,6 +33,16 @@ export const loginAxios = axios.create({
 		'content-type': 'application/json',
 	},
 })
+
+export const quoteAxios = axios.create({
+	baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
+	headers: {
+		'x-client-secret': process.env.NEXT_PUBLIC_BACKEND_KEY,
+		Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
+	},
+})
+
+export const fetcherQuote = (url) => quoteAxios.get(url).then((res) => res)
 
 export const fetcherStrapi = (url) => axiosApi.get(url).then((res) => res)
 

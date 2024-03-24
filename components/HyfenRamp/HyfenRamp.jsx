@@ -12,13 +12,16 @@ import { SwapComponent } from './Swap'
 import { BuyComponent } from './Buy'
 import { SellComponent } from './Sell'
 import TokenModal from './TokenModal'
+import { chainData } from '../../utils/helper'
 
 export default function HyfenRamp() {
+	const chainId = useChainId()
 	const router = useRouter()
 	const [idrValue, setIdrValue] = useState('')
 	const [cryptoValue, setCryptoValue] = useState('')
 	const [swapCryptoValue, setSwapCryptoValue] = useState('')
 	const [showModal, setShowModal] = useState(false)
+	const [tokenModal, setTokenModal] = useState(false)
 	const [domLoaded, setDomLoaded] = useState(false)
 	const { address } = useAccount()
 	const [currentCategory, setCurrentCategory] = useState(1)
@@ -31,37 +34,20 @@ export default function HyfenRamp() {
 	const [quoteLoading, setQuoteLoading] = useState(false)
 	const [toTokenValue, setToTokenValue] = useState(0)
 	const [selectedModal, setSelectedModal] = useState('token')
-	const [currentSelectedToken, setCurrentSelectedToken] = useState({
-		name: 'USDT',
-		imgUrl: '/images/usdt.svg',
-		native: false,
-		decimals: 1e6,
-		nickname: 'Tether (USDT)',
-		address: 'dac17f958d2ee523a2206206994597c13d831ec7',
-		coingecko: 'tether',
-		decimalValue: 6,
-	})
 
-	const [currentSelectedCoin, setCurrenctSelectedCoin] = useState({
-		name: 'USDT',
-		imgUrl: '/images/usdt.svg',
-		native: false,
-		decimals: 1e6,
-		nickname: 'Tether (USDT)',
-		address: 'dac17f958d2ee523a2206206994597c13d831ec7',
-		coingecko: 'tether',
-		decimalValue: 6,
-	})
+	const currentChainData = chainData.find((data) => data?.chainId === chainId)
 
-	const [currentSwappedToken, setCurrentSwappedToken] = useState({
-		name: 'USDC',
-		imgUrl: '/images/usdc.svg',
-		native: false,
-		decimals: 1e6,
-		nickname: 'Coin (USDC)',
-		address: 'A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-		decimalValue: 6,
-	})
+	const [currentSelectedToken, setCurrentSelectedToken] = useState(
+		currentChainData?.tokenData?.find((data) => data?.name === 'USDT')
+	)
+
+	const [currentSelectedCoin, setCurrenctSelectedCoin] = useState(
+		currentChainData?.tokenData?.find((data) => data?.name === 'USDT')
+	)
+
+	const [currentSwappedToken, setCurrentSwappedToken] = useState(
+		currentChainData?.tokenData?.find((data) => data?.name === 'USDC')
+	)
 
 	const nativeBalance = useBalance({ address })
 	const tokenBalance = useBalance({
@@ -71,8 +57,6 @@ export default function HyfenRamp() {
 			'dac17f958d2ee523a2206206994597c13d831ec7'
 		}`,
 	})
-
-	const chainId = useChainId()
 
 	const { data } = useSWR(
 		`/markets?vs_currency=idr&ids=${currentSelectedCoin?.coingecko}`,
@@ -99,8 +83,8 @@ export default function HyfenRamp() {
 				axios
 					.post('https://invoker.cloud/api/handle-quote', {
 						chainId,
-						fromToken: `0x${currentSelectedToken?.address}`,
-						toToken: `0x${currentSwappedToken?.address}`,
+						fromToken: `0x${currentSelectedToken?.contractAddress}`,
+						toToken: `0x${currentSwappedToken?.contractAddress}`,
 						amount: Number(swapCryptoValue) * currentSelectedToken?.decimals,
 					})
 					.then((response) => {
@@ -120,7 +104,7 @@ export default function HyfenRamp() {
 			}
 		}, 1000)
 		return () => clearTimeout(getData)
-	}, [swapCryptoValue])
+	}, [swapCryptoValue, chainId])
 
 	if (!domLoaded) return <div></div>
 	return (
@@ -128,8 +112,8 @@ export default function HyfenRamp() {
 			<RampModal
 				currentSelectedToken={currentSelectedToken}
 				setCurrentSelectedToken={setCurrentSelectedToken}
-				showModal={showModal}
-				setShowModal={setShowModal}
+				showModal={tokenModal}
+				setShowModal={setTokenModal}
 				setAmount={setCryptoValue}
 				setToTokenValue={setToTokenValue}
 				setDisableSwap={setDisableSwap}
@@ -206,20 +190,7 @@ export default function HyfenRamp() {
 								</a>
 							</div>
 						</div>
-						{currentCategory === 0 && (
-							<BuyComponent
-								idrValue={idrValue}
-								setIdrValue={setIdrValue}
-								setCryptoValue={setCryptoValue}
-								setShowModal={setShowModal}
-								cryptoValue={cryptoValue}
-								currentCategory={currentCategory}
-								data={data}
-								router={router}
-								currentSelectedCoin={currentSelectedCoin}
-								usedBalance={usedBalance}
-							/>
-						)}
+						{currentCategory === 0 && <BuyComponent />}
 						{currentCategory === 1 && (
 							<SellComponent
 								idrValue={idrValue}
@@ -244,7 +215,7 @@ export default function HyfenRamp() {
 								setValueExchanged={setValueExchanged}
 								setCryptoValue={setSwapCryptoValue}
 								setSelectedModal={setSelectedModal}
-								setShowModal={setShowModal}
+								setShowModal={setTokenModal}
 								currentSelectedToken={currentSelectedToken}
 								setCurrentSelectedToken={setCurrentSelectedToken}
 								setCurrentSwappedToken={setCurrentSwappedToken}
