@@ -63,7 +63,7 @@ const EnterCode = ({ changeStep, email, showCounter = true }) => {
 						email,
 						password,
 					})
-					const otpResult = await axiosBackend.post('/auth/verify-login', {
+					await axiosBackend.post('/auth/verify-login', {
 						verificationToken: result?.data?.data?.verificationToken,
 						otp,
 					})

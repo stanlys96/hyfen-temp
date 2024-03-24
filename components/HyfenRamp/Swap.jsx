@@ -145,7 +145,7 @@ export const SwapComponent = ({
 				setQuote(data)
 				refetch()
 			},
-			onError: (error) => {
+			onError: () => {
 				refetch()
 			},
 		}
@@ -159,9 +159,9 @@ export const SwapComponent = ({
 		functionName: 'approve',
 		args: [exchangeProxy, MAX_ALLOWANCE],
 	})
+	console.log(data)
 
-	const { data: writeContractResult, writeContractAsync: approveAsync } =
-		useWriteContract()
+	const { data: writeContractResult } = useWriteContract()
 
 	const { data: quoteData } = useEstimateGas({
 		to: quote?.to, // The address of the contract to send call data to, in this case 0x Exchange Proxy
