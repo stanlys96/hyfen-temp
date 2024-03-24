@@ -13,7 +13,6 @@ export const SellComponent = ({
 	setCryptoValue,
 	setShowModal,
 	cryptoValue,
-	currentCategory,
 	data,
 	router,
 	currentSelectedCoin,

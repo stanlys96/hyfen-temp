@@ -6,13 +6,9 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import { HeaderHyfen } from '../components/HeaderHyfen'
-import { axiosBackend, loginAxios } from '../utils/axios'
+import { axiosBackend } from '../utils/axios'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-	setToken,
-	setUser,
-	setVerificationToken,
-} from '../src/stores/user-slice'
+import { setVerificationToken } from '../src/stores/user-slice'
 import Swal from 'sweetalert2'
 
 const ForgotPassword = () => {
@@ -38,22 +34,6 @@ const ForgotPassword = () => {
 			}),
 			onSubmit: async (formValues) => {
 				try {
-					const theValues = {
-						...formValues,
-						device_id: 'device token',
-						device: '',
-					}
-					// console.log(theValues)
-					// router.replace('/sell-crypto')
-					// const data = await loginAxios.post('user/login', theValues)
-					// const accessToken = data.data.meta.token
-					// dispatch(setToken(accessToken))
-					// dispatch(setUser(data.data.data))
-					// if (method === 'buy') {
-					// 	router.replace('/buy-crypto')
-					// } else {
-					// 	router.replace('/sell-crypto')
-					// }
 					const data = await axiosBackend.post('/auth/login', {
 						email: formValues.email,
 						password: formValues.password,

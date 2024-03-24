@@ -1,19 +1,15 @@
-// import { resetPasswordRequest, resetPasswordVerify } from '@services'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import ButtonAuth from '../../atoms/ButtonAuth'
 import ButtonV2 from '../../atoms/ButtonV2'
 import InputOTP from '../../atoms/InputOTP'
-// import { useSnackbar } from 'src/components/Snackbar'
-// import useTranslation from 'src/hooks/useTranslation'
 import { axiosBackend } from '../../../utils/axios'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
 import { setAccessToken } from '../../../src/stores/user-slice'
 
-const EnterCode = ({ changeStep, setUrl, email, showCounter = true }) => {
-	// const { account } = useTranslation()
+const EnterCode = ({ changeStep, email, showCounter = true }) => {
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const [otp, setOtp] = useState('')
@@ -21,8 +17,6 @@ const EnterCode = ({ changeStep, setUrl, email, showCounter = true }) => {
 	const [counter, setCounter] = useState(60)
 	const [isError, setisError] = useState(false)
 	const { verificationToken, password } = useSelector((state) => state.user)
-
-	// const snackbar = useSnackbar()
 
 	const onResend = async () => {
 		try {
@@ -54,20 +48,17 @@ const EnterCode = ({ changeStep, setUrl, email, showCounter = true }) => {
 				verificationToken,
 				otp,
 			})
-			console.log(result)
 			if (result?.data?.message === 'ok') {
 				dispatch(setAccessToken(result?.data?.data?.accessToken))
 				router.replace('/login')
 			}
 		} catch (error) {
-			console.log(error?.response?.data?.message)
 			if (
 				error?.response?.data?.message === 'jwt expired' ||
 				error?.response?.data?.message ===
 					'body/verificationToken must NOT have fewer than 1 characters'
 			) {
 				try {
-					console.log(email, password)
 					const result = await axiosBackend.post('/auth/login', {
 						email,
 						password,
@@ -76,9 +67,7 @@ const EnterCode = ({ changeStep, setUrl, email, showCounter = true }) => {
 						verificationToken: result?.data?.data?.verificationToken,
 						otp,
 					})
-					console.log(otpResult, '<<< OTP RESULT')
 				} catch (e) {
-					console.log(e?.response?.data?.message)
 					setisError(true)
 				}
 			} else {

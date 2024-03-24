@@ -20,8 +20,9 @@ const Toast = Swal.mixin({
 })
 
 export default function BuyCrypto() {
-	const { currentSelectedOnrampCoin, verificationToken, onrampResult } =
-		useSelector((state) => state.user)
+	const { currentSelectedOnrampCoin, onrampResult } = useSelector(
+		(state) => state.user
+	)
 	return (
 		<>
 			<Head>

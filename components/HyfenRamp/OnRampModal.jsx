@@ -1,6 +1,4 @@
-import { chainData } from '../../utils/helper'
 import ArrowLeft from '../Icons/ArrowLeft'
-import SearchWhite from '../Icons/SearchWhite'
 import Image from 'next/image'
 import { supportedOnrampCoins } from '../../utils/helper'
 

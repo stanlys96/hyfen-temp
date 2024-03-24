@@ -2,17 +2,10 @@ import ArrowLeft from './Icons/ArrowLeft'
 import { ArrowRight } from './Icons'
 import { FormInput } from './molecules/FormInput'
 import { useState } from 'react'
-import { bankTypes, eWallets, existBankData } from '../utils/helper'
-import Image from 'next/image'
-import useSWR from 'swr'
-import { fetcherFlip } from '../utils/axios'
 import { CountryListJson } from '../data'
 // asd
 function CountryModal({ showModal, setShowModal, setFieldValue }) {
-	const { data: banksData } = useSWR(`/banks`, fetcherFlip)
-
 	const [searchValue, setSearchValue] = useState('')
-	const [selectedCategory, setSelectedCategory] = useState('bank')
 
 	const filterBank = (bankData) => {
 		return (

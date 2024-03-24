@@ -21,105 +21,98 @@ import {
 const ForgotPassword = () => {
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const [url] = useState('')
 	const [showModal, setShowModal] = useState(false)
-	const [selectedCountry, setSelectedCountry] = useState({
-		name: 'Choose Country',
-		code: '',
-	})
-	const {
-		values,
-		errors,
-		handleBlur,
-		handleChange,
-		handleSubmit,
-		isValid,
-		setFieldValue,
-	} = useFormik({
-		initialValues: {
-			password: '',
-			email: '',
-			password_confirmation: '',
-			fullName: '',
-			nationalID: '',
-			country: {
-				name: 'Choose Country',
-				code: '',
+	const { values, errors, handleBlur, handleSubmit, isValid, setFieldValue } =
+		useFormik({
+			initialValues: {
+				password: '',
+				email: '',
+				password_confirmation: '',
+				fullName: '',
+				nationalID: '',
+				country: {
+					name: 'Choose Country',
+					code: '',
+				},
 			},
-		},
-		validationSchema: yup.object({
-			fullName: yup.string().required('Full Name is required'),
-			nationalID: yup.string().required('National ID is required'),
-			country: yup.object({
-				name: yup.string().required('Country is required'),
-				code: yup.string().required('Country is required'),
-			}),
-			password: yup
-				.string()
-				.required('Password is required')
-				.trim(`'${'Password is required'}'`)
-				.min(8, 'Must contain 8 characters'),
-			email: yup.string().email('Invalid Email').required('Email is required'),
-			password_confirmation: yup
-				.string()
-				.when('password', {
-					is: (val) => (val && val.length > 0 ? true : false),
-					then: () =>
-						yup
-							.string()
-							.oneOf(
-								[yup.ref('password')],
-								'Both password need to be the same'
-							),
-				})
-				.required('Confirm Password is required')
-				.trim('Confirm Password is required'),
-		}),
-		onSubmit: async (values) => {
-			try {
-				const result = await axiosBackend.post('/auth/register', {
-					fullName: values.fullName,
-					nationalID: values.nationalID,
-					countryCode: values.country.code,
-					country: values.country.name,
-					password: values.password,
-					email: values.email,
-				})
-				console.log(result.data, '<<< RESULT')
-				if (result?.data?.statusCode === 200) {
-					dispatch(setEmail(values.email))
-					dispatch(setVerificationToken(result?.data?.data?.verificationToken))
-					dispatch(setPassword(values.password))
-					Swal.fire({
-						icon: 'success',
-						title: 'Success',
-						text: 'Please check your email and verify your account!',
-						showCancelButton: false,
-						confirmButtonText: 'OK',
-					}).then((result) => {
-						/* Read more about isConfirmed, isDenied below */
-						if (result.isConfirmed || result.isDismissed) {
-							router.replace('/code-verif')
-						} else if (result.isDenied) {
-							Swal.fire('Changes are not saved', '', 'info')
-						}
+			validationSchema: yup.object({
+				fullName: yup.string().required('Full Name is required'),
+				nationalID: yup.string().required('National ID is required'),
+				country: yup.object({
+					name: yup.string().required('Country is required'),
+					code: yup.string().required('Country is required'),
+				}),
+				password: yup
+					.string()
+					.required('Password is required')
+					.trim(`'${'Password is required'}'`)
+					.min(8, 'Must contain 8 characters'),
+				email: yup
+					.string()
+					.email('Invalid Email')
+					.required('Email is required'),
+				password_confirmation: yup
+					.string()
+					.when('password', {
+						is: (val) => (val && val.length > 0 ? true : false),
+						then: () =>
+							yup
+								.string()
+								.oneOf(
+									[yup.ref('password')],
+									'Both password need to be the same'
+								),
 					})
-				} else {
+					.required('Confirm Password is required')
+					.trim('Confirm Password is required'),
+			}),
+			onSubmit: async (values) => {
+				try {
+					const result = await axiosBackend.post('/auth/register', {
+						fullName: values.fullName,
+						nationalID: values.nationalID,
+						countryCode: values.country.code,
+						country: values.country.name,
+						password: values.password,
+						email: values.email,
+					})
+					console.log(result.data, '<<< RESULT')
+					if (result?.data?.statusCode === 200) {
+						dispatch(setEmail(values.email))
+						dispatch(
+							setVerificationToken(result?.data?.data?.verificationToken)
+						)
+						dispatch(setPassword(values.password))
+						Swal.fire({
+							icon: 'success',
+							title: 'Success',
+							text: 'Please check your email and verify your account!',
+							showCancelButton: false,
+							confirmButtonText: 'OK',
+						}).then((result) => {
+							/* Read more about isConfirmed, isDenied below */
+							if (result.isConfirmed || result.isDismissed) {
+								router.replace('/code-verif')
+							} else if (result.isDenied) {
+								Swal.fire('Changes are not saved', '', 'info')
+							}
+						})
+					} else {
+						Swal.fire({
+							title: 'The User?',
+							text: result?.data?.message ?? '',
+							icon: 'question',
+						})
+					}
+				} catch (error) {
 					Swal.fire({
 						title: 'The User?',
-						text: result?.data?.message ?? '',
+						text: error?.response?.data?.message ?? '',
 						icon: 'question',
 					})
 				}
-			} catch (error) {
-				Swal.fire({
-					title: 'The User?',
-					text: error?.response?.data?.message ?? '',
-					icon: 'question',
-				})
-			}
-		},
-	})
+			},
+		})
 	return (
 		<Verif
 			title={'Forgot password?'}

@@ -2,9 +2,7 @@ import Image from 'next/image'
 import CurrencyInput from 'react-currency-input-field'
 import ArrowRightBlack from '../Icons/ArrowRightBlack'
 import { Circles } from 'react-loader-spinner'
-import { AVAILABLE_TOKENS_BY_SYMBOL, formatNumber } from '../../utils/helper'
 import { ArrowDown } from '../Icons'
-import Swal from 'sweetalert2'
 import useSWR from 'swr'
 import qs from 'qs'
 import { useState } from 'react'
@@ -22,7 +20,6 @@ import {
 } from 'wagmi'
 import erc20Abi from '../../contracts/erc20-abi.json'
 import { useEffect } from 'react'
-import axios from 'axios'
 
 const MAX_ALLOWANCE =
 	115792089237316195423570985008687907853269984665640564039457584007913129639935n
@@ -45,30 +42,19 @@ const fetcher = ([endpoint, params]) => {
 
 export const SwapComponent = ({
 	quoteLoading,
-	cryptoValue,
-	setAmount,
-	setDisableSwap,
-	setValueExchanged,
-	setCryptoValue,
 	setSelectedModal,
 	setShowModal,
 	currentSelectedToken,
 	setCurrentSelectedToken,
 	setCurrentSwappedToken,
 	currentSwappedToken,
-	disableSwap,
-	toTokenValue,
-	setToTokenValue,
 }) => {
 	const chainId = useChainId()
-	const [finalize, setFinalize] = useState(false)
 	const [price, setPrice] = useState()
 	const [quote, setQuote] = useState()
 	const [sellAmount, setSellAmount] = useState('')
 	const [buyAmount, setBuyAmount] = useState('')
 	const [tradeDirection, setTradeDirection] = useState('sell')
-	const [sellToken, setSellToken] = useState('usdt')
-	const [buyToken, setBuyToken] = useState('usdc')
 	const sellTokenDecimals = currentSelectedToken?.decimalValue
 	const { address } = useAccount()
 	const parsedSellAmount =
@@ -90,7 +76,7 @@ export const SwapComponent = ({
 		args: [address, exchangeProxy],
 	})
 
-	const { data: currentBalance, isError } = useBalance({
+	const { data: currentBalance } = useBalance({
 		address: address,
 		token: `0x${currentSelectedToken?.contractAddress}`,
 	})
@@ -137,7 +123,6 @@ export const SwapComponent = ({
 			},
 		}
 	)
-	console.log(price, '<<< PRICE')
 	const { isLoading: isLoadingPrice } = useSWR(
 		[
 			`https://${
@@ -165,7 +150,7 @@ export const SwapComponent = ({
 			},
 		}
 	)
-
+	console.log(isLoadingPrice)
 	// 1. Read from erc20, does spender (0x Exchange Proxy) have allowance?
 
 	const { data } = useSimulateContract({
@@ -182,6 +167,8 @@ export const SwapComponent = ({
 		to: quote?.to, // The address of the contract to send call data to, in this case 0x Exchange Proxy
 		data: quote?.data, // The call data required to be sent to the to contract address.
 	})
+
+	console.log(quoteData)
 
 	const { sendTransaction } = useSendTransaction()
 
@@ -368,7 +355,7 @@ export const SwapComponent = ({
 							if (parseFloat(sellAmount) > parseFloat(formattedAllowance)) {
 								try {
 									console.log('APPROVE!')
-									const writtenValue = await approveAsync(data?.request)
+									// const writtenValue = await approveAsync(data?.request)
 								} catch (e) {
 									console.log(e)
 								}
