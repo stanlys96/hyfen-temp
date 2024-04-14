@@ -250,7 +250,7 @@ export default function BuyCrypto() {
 									onClick={async () => {
 										try {
 											const emailValidation = RegExp(
-												/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+												/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 											)
 											if (!emailValidation.test(values.email)) {
 												return Swal.fire('Invalid email format', '', 'info')
