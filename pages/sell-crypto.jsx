@@ -9,50 +9,29 @@ import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import ArrowRightBlack from '../components/Icons/ArrowRightBlack'
 import { HeaderHyfen } from '../components/HeaderHyfen'
-import FlipPaymentMethodModal from '../components/PaymentMethodModal'
 import Image from 'next/image'
 import Swal from 'sweetalert2'
 import { ColorRing } from 'react-loader-spinner'
 import CurrencyInput from 'react-currency-input-field'
 import useSWR from 'swr'
-import {
-	fetcher,
-	axiosApi,
-	axiosSecondary,
-	quoteAxios,
-	fetcherQuote,
-} from '../utils/axios'
+import { quoteAxios, fetcherQuote } from '../utils/axios'
 import { useSelector } from 'react-redux'
-import { chainData } from '../utils/helper'
 import {
-	useBalance,
 	useAccount,
 	useWriteContract,
 	useWaitForTransactionReceipt,
-	useSendTransaction,
 } from 'wagmi'
-import erc20Abi from '../contracts/erc20-abi.json'
-// import seamlessAbi from '../contracts/seamless-abi.json'
-import { parseEther } from 'viem'
 import { useDispatch } from 'react-redux'
-import { setOfframpResult, setSelectedCoin } from '../src/stores/user-slice'
+import { setOfframpResult } from '../src/stores/user-slice'
 import PaymentMethodModal from '../components/OnrampPaymentMethodModal'
 import { formatNumber } from '../utils/helper'
 import RecipientModal from '../components/RecipientModal'
 import { onrampPaymentMethod } from '../utils/helper'
 import { Circles } from 'react-loader-spinner'
 
-const delay = (ms) => new Promise((res) => setTimeout(res, ms))
-
 export default function BuyCrypto() {
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const [showModal, setShowModal] = useState(false)
-	const [selectedProvider, setSelectedProvider] = useState({
-		name: 'GoPay',
-		code: 'gopay',
-		imgUrl: '/img/banks/gopay.png',
-	})
 	const [paymentModal, setPaymentModal] = useState(false)
 	const [recipientModal, setRecipientModal] = useState(false)
 	const [currentRecipient, setCurrentRecipient] = useState({})
@@ -69,34 +48,17 @@ export default function BuyCrypto() {
 		percentFeeAmount: 3,
 		id: '65aea6d44bbef2a538a672f5',
 	})
-	const { sendTransactionAsync } = useSendTransaction()
-	const [accountName, setAccountName] = useState('ACCOUNT NAME')
-	const [isCheckingBankAccount, setIsCheckingBankAccount] = useState(false)
-	const [tokenLoading, setTokenLoading] = useState(false)
-	const {
-		currentSelectedCoin,
-		verificationToken,
-		accessToken,
-		currentUser,
-		currentSelectedOfframpCoin,
-	} = useSelector((state) => state.user)
-	const [receiveValue, setReceiveValue] = useState('')
-	const [sellValue, setSellValue] = useState(
-		currentSelectedCoin?.cryptoValue ?? '0'
-	)
-	const { address, chainId } = useAccount()
-	const [currentChain, setCurrentChain] = useState(
-		chainData.find((data) => data.chainId === chainId)
-	)
+	const [isCheckingBankAccount] = useState(false)
+	const [tokenLoading] = useState(false)
+	const { currentSelectedCoin, currentUser, currentSelectedOfframpCoin } =
+		useSelector((state) => state.user)
+	const { address } = useAccount()
 
 	const filterByName = (nameInBank) => {
 		return nameInBank?.name === currentUser?.name
 	}
-	const {
-		isPending: isPendingApproval,
-		writeContractAsync: writeApprovalContract,
-		data: approvalHash,
-	} = useWriteContract()
+	const { isPending: isPendingApproval, data: approvalHash } =
+		useWriteContract()
 
 	const { isLoading: approvalLoading } = useWaitForTransactionReceipt({
 		hash: approvalHash,
@@ -117,44 +79,6 @@ export default function BuyCrypto() {
 	// 		tokenAllowance?.toString() / parseFloat(currentSelectedCoin?.decimals)
 	// 	)
 
-	const nativeBalance = useBalance({ address })
-	const tokenBalance = useBalance({
-		chainId,
-		address,
-		token: `0x${
-			currentChain?.tokenData?.find(
-				(token) => token?.name === currentSelectedCoin?.name
-			)?.contractAddress ?? 'dac17f958d2ee523a2206206994597c13d831ec7'
-		}`,
-	})
-
-	const usedBalance = currentSelectedCoin?.native
-		? parseFloat(nativeBalance?.data?.formatted)
-		: parseFloat(tokenBalance?.data?.formatted)
-
-	const insufficientBalance = parseFloat(sellValue ?? '0') > usedBalance
-
-	let periodCheckBank = 0
-	const checkBankInquiry = async () => {
-		const getBankAccount = await axiosSecondary.post('/inquiry', {
-			account_number: values.accountNumber,
-			bank_code: selectedProvider.code.toLowerCase(),
-		})
-		if (getBankAccount.data.status !== 'PENDING') {
-			return getBankAccount
-		}
-		if (periodCheckBank >= 20000) {
-			return {
-				data: {
-					status: 'TIME_OUT',
-					account_holder: '',
-				},
-			}
-		}
-		await delay(2500)
-		periodCheckBank += 2500
-		return checkBankInquiry()
-	}
 	const {
 		values,
 		errors,
@@ -196,99 +120,6 @@ export default function BuyCrypto() {
 		},
 	})
 
-	const addToWalletAccounts = () => {
-		axiosApi
-			.post('/api/check-wallet-accounts', {
-				wallet_address: address,
-				bank_code: selectedProvider?.code,
-				bank_account_name: accountName,
-				bank_account_number: values.accountNumber,
-				phone_number: '12345678',
-			})
-			.then(() => {
-				// console.log(res.data);
-			})
-			.catch((e) => {
-				console.log(e)
-			})
-	}
-
-	const addToTransactionHistory = (status, tempState) => {
-		const date = new Date(Date.now())
-		const dateStr =
-			date.getFullYear() +
-			'-' +
-			('00' + (date.getMonth() + 1)).slice(-2) +
-			'-' +
-			('00' + date.getDate()).slice(-2) +
-			' ' +
-			('00' + date.getHours()).slice(-2) +
-			':' +
-			('00' + date.getMinutes()).slice(-2) +
-			':' +
-			('00' + date.getSeconds()).slice(-2) +
-			('.' + date.getMilliseconds()).slice(-4)
-		let idempotencyKey = ''
-		idempotencyKey = tempState
-			? chainData.find((data) => data.chainId === chainId)?.name +
-			  `-${tempState}`
-			: ''
-		axiosApi
-			.post('/api/transaction-histories', {
-				data: {
-					wallet_address: address,
-					token: currentSelectedCoin?.name,
-					chain: chainId?.toString(),
-					bank_name: selectedProvider?.name,
-					bank_account_number: values.accountNumber,
-					status: status,
-					bank_account_name: accountName,
-					phone_number: '1234578',
-					token_value: parseFloat(sellValue),
-					idr_value: parseFloat(receiveValue),
-					transaction_success: false,
-					wallet_destination: process.env.NEXT_PUBLIC_VAULT_ADDRESS ?? '',
-					idempotency_key: idempotencyKey,
-					transaction_hash:
-						status === 'Blockchain'
-							? currentChain?.transactionUrl + tempState
-							: '',
-					transaction_id: '',
-					receipt: '',
-					fee: 2400,
-					receive: Math.ceil(receiveValue),
-					start_progress: status === 'Blockchain' ? dateStr : null,
-					bank_code: selectedProvider?.code,
-				},
-			})
-			.then(() => {
-				if (status === 'Blockchain') {
-					dispatch(
-						setSelectedCoin({
-							...currentSelectedCoin,
-							cryptoValue: sellValue,
-							idrValue: receiveValue,
-							userAddress: address,
-							providerName: selectedProvider?.name,
-							accountName: accountName,
-							accountNumber: values.accountNumber,
-							providerCode: selectedProvider?.code,
-							providerImgUrl: selectedProvider?.imgUrl,
-						})
-					)
-					router.push('/success')
-				}
-			})
-			.catch((e) => {
-				console.log(e)
-			})
-	}
-
-	const resetValue = () => {
-		setFieldValue('accountNumber', '')
-		setAccountName('ACCOUNT NAME')
-	}
-
 	const { data: recipientData, mutate: recipientMutate } = useSWR(
 		`/recipient?limit=1000`,
 		fetcherQuote
@@ -297,11 +128,7 @@ export default function BuyCrypto() {
 	const recipientResult = recipientData?.data?.data?.docs
 	const filteredRecipient = recipientResult?.filter(filterByName)
 
-	const {
-		data: quoteData,
-		isLoading,
-		error: quoteError,
-	} = useSWR(
+	const { data: quoteData, isLoading } = useSWR(
 		`/offramp/quote?amount=${parseFloat(
 			values.cryptoValue ?? '0'
 		)}&inputCurrency=${currentSelectedOfframpCoin?.id}&outputCurrency=${
@@ -314,10 +141,6 @@ export default function BuyCrypto() {
 
 	const waitApproval =
 		isPendingApproval || approvalLoading || isPendingCoin || tokenLoading
-
-	useEffect(() => {
-		setCurrentChain(chainData.find((data) => data.chainId === chainId))
-	}, [chainId])
 
 	useEffect(() => {
 		if (result) {
@@ -399,7 +222,6 @@ export default function BuyCrypto() {
 										const re = /^[0-9]?[0-9]*$/
 										if (re.test(e.target.value)) {
 											setFieldValue('accountNumber', e.target.value)
-											setAccountName('ACCOUNT NAME')
 										}
 									}}
 									name='accountNumber'

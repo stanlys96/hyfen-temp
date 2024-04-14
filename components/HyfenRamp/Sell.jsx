@@ -1,12 +1,10 @@
 import CurrencyInput from 'react-currency-input-field'
 import Image from 'next/image'
-import Rupiah from '../Icons/Rupiah'
 import { ArrowDown } from '../Icons'
 import ArrowRightBlack from '../Icons/ArrowRightBlack'
 import { useDispatch } from 'react-redux'
 import {
 	setCurrentSelectedOfframpCoin,
-	setCurrentSelectedOnrampCoin,
 	setMethod,
 } from '../../src/stores/user-slice'
 import { useRouter } from 'next/router'
@@ -61,11 +59,7 @@ export const SellComponent = () => {
 		isRandomNumberDecimal: false,
 		id: '64dae2066acf6644dd1a3c76',
 	})
-	const {
-		data: quoteData,
-		isLoading,
-		error: quoteError,
-	} = useSWR(
+	const { data: quoteData, isLoading } = useSWR(
 		`/offramp/quote?amount=${parseFloat(cryptoValue ?? '0')}&inputCurrency=${
 			currentSelectedCoin?.id
 		}&outputCurrency=${currentSelectedCurrency?.currency}`,

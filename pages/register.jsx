@@ -17,12 +17,10 @@ import {
 	setPassword,
 	setVerificationToken,
 } from '../src/stores/user-slice'
-import { axiosSecondary, fetcherFlip } from '../utils/axios'
-import useSWR from 'swr'
+import { axiosSecondary } from '../utils/axios'
 
 const ForgotPassword = () => {
 	const dispatch = useDispatch()
-	const { data: banksData } = useSWR(`/banks`, fetcherFlip)
 	const router = useRouter()
 	const [showModal, setShowModal] = useState(false)
 	const { values, errors, handleBlur, handleSubmit, isValid, setFieldValue } =

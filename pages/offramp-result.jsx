@@ -26,9 +26,9 @@ const Toast = Swal.mixin({
 })
 
 export default function OfframpResult() {
-	const { currentSelectedOnrampCoin, onrampResult, offrampResult } =
-		useSelector((state) => state.user)
-	console.log(offrampResult)
+	const { currentSelectedOnrampCoin, offrampResult } = useSelector(
+		(state) => state.user
+	)
 	return (
 		<>
 			<Head>

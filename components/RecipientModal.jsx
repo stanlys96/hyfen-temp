@@ -1,8 +1,5 @@
 import ArrowLeft from './Icons/ArrowLeft'
 import { ArrowRight } from './Icons'
-import { FormInput } from './molecules/FormInput'
-import { useState } from 'react'
-import { formatNumber } from '../utils/helper'
 import Image from 'next/image'
 import { onrampPaymentMethod } from '../utils/helper'
 // asd

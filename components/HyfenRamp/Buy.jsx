@@ -1,6 +1,5 @@
 import CurrencyInput from 'react-currency-input-field'
 import Image from 'next/image'
-import Rupiah from '../Icons/Rupiah'
 import { ArrowDown } from '../Icons'
 import ArrowRightBlack from '../Icons/ArrowRightBlack'
 import { useDispatch } from 'react-redux'

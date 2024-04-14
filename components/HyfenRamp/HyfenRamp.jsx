@@ -3,9 +3,7 @@ import Image from 'next/image'
 import { Fade } from 'react-reveal'
 import Link from 'next/link'
 import RampModal from './RampModal'
-import { useAccount, useChainId, useBalance } from 'wagmi'
-import { fetcher } from '../../utils/axios'
-import useSWR from 'swr'
+import { useChainId } from 'wagmi'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { SwapComponent } from './Swap'
@@ -17,13 +15,12 @@ import { chainData } from '../../utils/helper'
 export default function HyfenRamp() {
 	const chainId = useChainId()
 	const router = useRouter()
-	const [idrValue, setIdrValue] = useState('')
-	const [cryptoValue, setCryptoValue] = useState('')
+	const [, setIdrValue] = useState('')
+	const [, setCryptoValue] = useState('')
 	const [swapCryptoValue, setSwapCryptoValue] = useState('')
 	const [showModal, setShowModal] = useState(false)
 	const [tokenModal, setTokenModal] = useState(false)
 	const [domLoaded, setDomLoaded] = useState(false)
-	const { address } = useAccount()
 	const [currentCategory, setCurrentCategory] = useState(1)
 	const [, setAmount] = useState(0)
 	// const [, setTo] = useState('')
@@ -48,26 +45,6 @@ export default function HyfenRamp() {
 	const [currentSwappedToken, setCurrentSwappedToken] = useState(
 		currentChainData?.tokenData?.find((data) => data?.name === 'USDC')
 	)
-
-	const nativeBalance = useBalance({ address })
-	const tokenBalance = useBalance({
-		address,
-		token: `0x${
-			currentSelectedCoin?.contractAddress ??
-			'dac17f958d2ee523a2206206994597c13d831ec7'
-		}`,
-	})
-
-	const { data } = useSWR(
-		`/markets?vs_currency=idr&ids=${currentSelectedCoin?.coingecko}`,
-		fetcher
-	)
-
-	const usedBalance = currentSelectedCoin?.native
-		? parseFloat(nativeBalance?.data?.formatted)
-		: parseFloat(tokenBalance?.data?.formatted)
-
-	const insufficientBalance = parseFloat(cryptoValue ?? '0') > usedBalance
 
 	useEffect(() => {
 		setDomLoaded(true)
