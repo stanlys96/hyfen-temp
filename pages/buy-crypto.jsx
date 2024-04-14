@@ -17,7 +17,7 @@ import useSWR from 'swr'
 import { fetcherQuote, quoteAxios } from '../utils/axios'
 import { Circles } from 'react-loader-spinner'
 import Image from 'next/image'
-import OnrampPaymentMethodModal from '../components/OnrampPaymentMethodModal'
+import PaymentMethodModal from '../components/OnrampPaymentMethodModal'
 import { useDispatch } from 'react-redux'
 import { setOnrampResult } from '../src/stores/user-slice'
 
@@ -27,9 +27,9 @@ export default function BuyCrypto() {
 	const { address } = useAccount()
 	const [selectedOption, setSelectedOption] = useState('input')
 	const [showModal, setShowModal] = useState(false)
-	const [paymentModal, setPaymentModal] = useState(false)
 	const [cryptoValue, setCryptoValue] = useState('')
 	const { currentSelectedOnrampCoin } = useSelector((state) => state.user)
+	const [paymentModal, setPaymentModal] = useState(false)
 
 	const [paymentMethod, setPaymentMethod] = useState({
 		name: 'Virtual Account Mandiri',
@@ -120,22 +120,22 @@ export default function BuyCrypto() {
 			<Head>
 				<title>Hyfen GG | Buy Crypto</title>
 			</Head>
-			<main className='relative h-screen max-h-full w-full bg-app-background'>
+			<main className='relative min-h-[100vh] md:h-screen max-h-full w-full bg-app-background'>
 				{/* Container */}
 				<HeaderHyfen withWallet />
 				<NetworkModal showModal={showModal} setShowModal={setShowModal} />
-				<OnrampPaymentMethodModal
+				<PaymentMethodModal
 					showModal={paymentModal}
 					setShowModal={setPaymentModal}
 					setPaymentMethod={setPaymentMethod}
 				/>
-				<div className='relative h-full max-w-7xl container mx-auto flex gap-x-5 justify-center items-center h-full pt-[15vh]'>
+				<div className='relative h-full max-w-7xl container mx-auto flex md:flex-row flex-col gap-x-5 justify-center items-center h-full pt-[15vh]'>
 					{/* Container content */}
-					<div className='relative h-full flex flex-col justify-start items-center'>
+					<div className='relative h-full w-fit md:mt-0 flex flex-col justify-start items-center'>
 						<div className='bg-[#1A1E48] p-[30px] rounded-[10px]'>
 							<p className='text-white text-[20px] text-bold'>Send crypto to</p>
 							<p className='text-[#9CA3AF] text-[16px] mt-5'>Choose Network*</p>
-							<div className='border border-[#FFFFFF4D] cursor-pointer px-[12px] w-[436px] rounded-[11px] h-[65px] flex justify-between items-center mt-[15px]'>
+							<div className='border border-[#FFFFFF4D] cursor-pointer px-[12px] md:w-[436px] rounded-[11px] h-[65px] flex justify-between items-center mt-[15px]'>
 								<div className='flex gap-x-4 items-center'>
 									<Image
 										width={30}
@@ -213,7 +213,7 @@ export default function BuyCrypto() {
 							<p className='text-[#9CA3AF] text-[16px] mt-5'>Payment method*</p>
 							<div
 								onClick={() => setPaymentModal(true)}
-								className='border border-[#FFFFFF4D] cursor-pointer px-[12px] w-[436px] rounded-[11px] h-[65px] flex justify-between items-center mt-[15px]'
+								className='border border-[#FFFFFF4D] cursor-pointer px-[12px] md:w-[436px] rounded-[11px] h-[65px] flex justify-between items-center mt-[15px]'
 							>
 								<div className='flex gap-x-4 items-center'>
 									<Image
@@ -236,8 +236,8 @@ export default function BuyCrypto() {
 							</p>
 						</div>
 					</div>
-					<div className='relative h-full flex flex-col w-[440px] justify-start items-start'>
-						<div className='bg-[#1A1E48] p-[30px] w-[440px] rounded-[10px] w-full'>
+					<div className='relative h-full flex flex-col md:mt-0 mt-[30px] md:w-[440px] justify-start items-start pb-[100px] md:pb-0'>
+						<div className='bg-[#1A1E48] p-[30px] md:w-[440px] rounded-[10px] w-full'>
 							<p className='text-white text-[20px] text-bold'>
 								Account Information
 							</p>

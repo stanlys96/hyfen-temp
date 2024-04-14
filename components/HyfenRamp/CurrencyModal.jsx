@@ -1,14 +1,16 @@
 import ArrowLeft from '../Icons/ArrowLeft'
 import Image from 'next/image'
-import { defaultCurrency, supportedOnrampCoins } from '../../utils/helper'
+import { currencyList } from '../../utils/helper'
 
-function OnRampModal({
+function CurrencyModal({
 	showModal,
 	setShowModal,
-	setCurrenctSelectedCoin,
 	setCurrentSelectedCurrency,
-	type,
+	availableCurrencies,
 }) {
+	const filterCurrencies = (data) => {
+		return availableCurrencies.includes(data.currency)
+	}
 	return (
 		<div className={`${showModal ? 'block' : 'hidden'} md:w-full z-1000`}>
 			<div
@@ -33,20 +35,14 @@ function OnRampModal({
 								placeholder='Search...'
 							/>
 						</div> */}
-						{supportedOnrampCoins.map((data, index) => (
+						{currencyList.filter(filterCurrencies).map((data, index) => (
 							<div
 								key={index}
 								onClick={() => {
-									if (!data.transactionType.includes(type)) return
-									setCurrenctSelectedCoin(data)
-									setCurrentSelectedCurrency(defaultCurrency)
+									setCurrentSelectedCurrency(data)
 									setShowModal(false)
 								}}
-								className={`${
-									!data.transactionType.includes(type)
-										? 'cursor-not-allowed'
-										: 'cursor-pointer'
-								} flex gap-x-4 items-center my-5`}
+								className={`cursor-pointer flex gap-x-4 items-center my-5`}
 							>
 								<Image
 									width={40}
@@ -57,23 +53,10 @@ function OnRampModal({
 								/>
 								<div>
 									<div className='flex gap-x-2 items-center'>
-										<p
-											className={`font-bold text-[13px] ${
-												!data.transactionType.includes(type)
-													? 'line-through'
-													: 'no-underline'
-											}`}
-										>
-											{data.label}{' '}
-										</p>
-										<p className='font-bold text-[13px]'>
-											{!data.transactionType.includes(type) && 'Coming soon'}
+										<p className={`font-bold text-[13px] no-underline`}>
+											{data.name}
 										</p>
 									</div>
-									<p className='text-[#9CA3AF] text-[14px]'>
-										{data.network[0].toUpperCase() + data.network.slice(1)}{' '}
-										Network
-									</p>
 								</div>
 							</div>
 						))}
@@ -84,4 +67,4 @@ function OnRampModal({
 	)
 }
 
-export default OnRampModal
+export default CurrencyModal

@@ -19,7 +19,8 @@
 		"**/*.tsx",
 		"pages/api/types.js",
 		"pages/api/quote.js",
-		"pages/api/price.js"
+		"pages/api/price.js",
+		"pages/offramp-result.jsx"
 	],
 	"exclude": ["node_modules"]
 }

@@ -3,11 +3,23 @@ import React, { useEffect, useState } from 'react'
 import ButtonAuth from '../../atoms/ButtonAuth'
 import ButtonV2 from '../../atoms/ButtonV2'
 import InputOTP from '../../atoms/InputOTP'
-import { axiosBackend } from '../../../utils/axios'
+import { axiosBackend, axiosSecondary } from '../../../utils/axios'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
 import { setAccessToken } from '../../../src/stores/user-slice'
+import Swal from 'sweetalert2'
+
+const Toast = Swal.mixin({
+	toast: true,
+	position: 'center',
+	showConfirmButton: false,
+	timer: 3000,
+	timerProgressBar: true,
+	didOpen: (toast) => {
+		toast.addEventListener('mouseenter', Swal.close)
+	},
+})
 
 const EnterCode = ({ changeStep, email, showCounter = true }) => {
 	const dispatch = useDispatch()
@@ -41,18 +53,38 @@ const EnterCode = ({ changeStep, email, showCounter = true }) => {
 		changeStep(2)
 		e.preventDefault()
 		setisError(false)
-		console.log(otp)
-
+		const currentEmail = await axiosSecondary.get(
+			`/user-recipients?filters[email][$eq]=${email}`
+		)
+		const emailData = currentEmail?.data?.data?.[0]
+		console.log(emailData.attributes)
 		try {
 			const result = await axiosBackend.post('/auth/verify-login', {
 				verificationToken,
 				otp,
 			})
+			console.log(result)
 			if (result?.data?.message === 'ok') {
 				dispatch(setAccessToken(result?.data?.data?.accessToken))
+				if (emailData) {
+					await axiosSecondary.put(`/user-recipients/${emailData?.id}`, {
+						data: {
+							country: emailData.attributes.country,
+							country_code: emailData.attributes.country_code,
+							email: emailData.attributes.email,
+							name: emailData.attributes.name,
+							access_token: result?.data?.data?.accessToken,
+						},
+					})
+				}
+				Toast.fire({
+					icon: 'success',
+					title: 'Verification successful!',
+				})
 				router.replace('/login')
 			}
 		} catch (error) {
+			console.log(error)
 			if (
 				error?.response?.data?.message === 'jwt expired' ||
 				error?.response?.data?.message ===

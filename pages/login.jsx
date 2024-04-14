@@ -6,10 +6,11 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import { HeaderHyfen } from '../components/HeaderHyfen'
-import { axiosBackend } from '../utils/axios'
+import { axiosBackend, axiosSecondary } from '../utils/axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { setVerificationToken } from '../src/stores/user-slice'
+import { setCurrentUser, setVerificationToken } from '../src/stores/user-slice'
 import Swal from 'sweetalert2'
+import { setAccessToken } from '../src/stores/user-slice'
 
 const ForgotPassword = () => {
 	const router = useRouter()
@@ -39,7 +40,18 @@ const ForgotPassword = () => {
 						password: formValues.password,
 					})
 					if (data?.data?.statusCode === 200) {
+						const theUser = await axiosSecondary.get(
+							`/user-recipients?filters[email][$eq]=${formValues.email}`
+						)
+						const currentUser = theUser?.data?.data?.[0]
 						dispatch(setVerificationToken(data?.data?.data?.verificationToken))
+						dispatch(setAccessToken(currentUser?.attributes?.access_token))
+						dispatch(
+							setCurrentUser({
+								id: currentUser?.id,
+								...currentUser?.attributes,
+							})
+						)
 						if (method === 'buy') {
 							router.replace('/buy-crypto')
 						} else {

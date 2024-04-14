@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { store } from '../src/stores'
 
 export const axiosCustom = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_AXIOS_CUSTOM,
@@ -38,7 +39,6 @@ export const quoteAxios = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
 	headers: {
 		'x-client-secret': process.env.NEXT_PUBLIC_BACKEND_KEY,
-		Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
 	},
 })
 
@@ -51,11 +51,26 @@ loginAxios.interceptors.request.use(
 		const {
 			user: { token },
 		} = store.getState()
-
 		if (token) {
-			config.headers.authorization = `Bearer ${token}`
+			config.headers.authorization = `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
 		}
 
+		return config
+	},
+	(error) => Promise.reject(error)
+)
+
+quoteAxios.interceptors.request.use(
+	(config) => {
+		const {
+			user: { accessToken, currentUser },
+		} = store.getState()
+		console.log(store.getState(), '<<< USER')
+		if (accessToken) {
+			config.headers.Authorization = `Bearer ${accessToken}`
+		} else {
+			config.headers.Authorization = `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+		}
 		return config
 	},
 	(error) => Promise.reject(error)
@@ -79,7 +94,7 @@ loginAxios.interceptors.request.use(
 // )
 
 axiosSecondary.interceptors.request.use((requestConfig) => {
-	requestConfig.headers['Authorization'] = process.env.NEXT_PUBLIC_FLIP_AUTH
+	requestConfig.headers['Authorization'] = process.env.NEXT_PUBLIC_STRAPI_TOKEN
 
 	return requestConfig
 })

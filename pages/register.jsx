@@ -17,9 +17,12 @@ import {
 	setPassword,
 	setVerificationToken,
 } from '../src/stores/user-slice'
+import { axiosSecondary, fetcherFlip } from '../utils/axios'
+import useSWR from 'swr'
 
 const ForgotPassword = () => {
 	const dispatch = useDispatch()
+	const { data: banksData } = useSWR(`/banks`, fetcherFlip)
 	const router = useRouter()
 	const [showModal, setShowModal] = useState(false)
 	const { values, errors, handleBlur, handleSubmit, isValid, setFieldValue } =
@@ -76,7 +79,19 @@ const ForgotPassword = () => {
 						password: values.password,
 						email: values.email,
 					})
-					console.log(result.data, '<<< RESULT')
+					try {
+						await axiosSecondary.post('/user-recipients', {
+							data: {
+								email: values.email,
+								name: values.fullName,
+								country: values.country.name,
+								country_code: values.country.code,
+								access_token: '',
+							},
+						})
+					} catch (e) {
+						console.log(e)
+					}
 					if (result?.data?.statusCode === 200) {
 						dispatch(setEmail(values.email))
 						dispatch(
@@ -132,7 +147,7 @@ const ForgotPassword = () => {
 					onSubmit={handleSubmit}
 					className='w-full relative flex flex-col justify-center items-center gap-4'
 				>
-					<div className='flex gap-x-4 w-full'>
+					<div className='flex gap-x-4 w-full md:flex-row flex-col'>
 						<div className='w-full flex-auto flex flex-col gap-y-4'>
 							<FormInput
 								label={'Email Address'}
@@ -178,7 +193,7 @@ const ForgotPassword = () => {
 								notes={errors.password_confirmation}
 							/>
 						</div>
-						<div className='w-full flex-auto flex flex-col gap-y-4'>
+						<div className='w-full mt-4 md:mt-0 flex-auto flex flex-col gap-y-4'>
 							<FormInput
 								label={'Full Name'}
 								placeholder={'Full Name'}
@@ -251,7 +266,7 @@ const ForgotPassword = () => {
 				</form>
 			</div>
 
-			<div className='relative flex gap-x-2 items-center'>
+			<div className='relative flex gap-x-2 items-center md:pt-0 pt-[100px]'>
 				<span className='text-white mt-[16px]'>Have an account?</span>
 				<LinkAuth
 					href='/login'

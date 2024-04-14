@@ -9,13 +9,19 @@ import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import ArrowRightBlack from '../components/Icons/ArrowRightBlack'
 import { HeaderHyfen } from '../components/HeaderHyfen'
-import PaymentMethodModal from '../components/PaymentMethodModal'
+import FlipPaymentMethodModal from '../components/PaymentMethodModal'
 import Image from 'next/image'
 import Swal from 'sweetalert2'
 import { ColorRing } from 'react-loader-spinner'
 import CurrencyInput from 'react-currency-input-field'
 import useSWR from 'swr'
-import { fetcher, axiosApi, axiosSecondary } from '../utils/axios'
+import {
+	fetcher,
+	axiosApi,
+	axiosSecondary,
+	quoteAxios,
+	fetcherQuote,
+} from '../utils/axios'
 import { useSelector } from 'react-redux'
 import { chainData } from '../utils/helper'
 import {
@@ -29,7 +35,12 @@ import erc20Abi from '../contracts/erc20-abi.json'
 // import seamlessAbi from '../contracts/seamless-abi.json'
 import { parseEther } from 'viem'
 import { useDispatch } from 'react-redux'
-import { setSelectedCoin } from '../src/stores/user-slice'
+import { setOfframpResult, setSelectedCoin } from '../src/stores/user-slice'
+import PaymentMethodModal from '../components/OnrampPaymentMethodModal'
+import { formatNumber } from '../utils/helper'
+import RecipientModal from '../components/RecipientModal'
+import { onrampPaymentMethod } from '../utils/helper'
+import { Circles } from 'react-loader-spinner'
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms))
 
@@ -42,12 +53,33 @@ export default function BuyCrypto() {
 		code: 'gopay',
 		imgUrl: '/img/banks/gopay.png',
 	})
+	const [paymentModal, setPaymentModal] = useState(false)
+	const [recipientModal, setRecipientModal] = useState(false)
+	const [currentRecipient, setCurrentRecipient] = useState({})
+	const [selectedOption, setSelectedOption] = useState('input')
+
+	const [paymentMethod, setPaymentMethod] = useState({
+		name: 'OVO',
+		code: 'ovo',
+		group: 'ewallet',
+		currency: 'IDR',
+		image: '/img/ovo.png',
+		isActive: true,
+		flatFeeAmount: 500,
+		percentFeeAmount: 3,
+		id: '65aea6d44bbef2a538a672f5',
+	})
 	const { sendTransactionAsync } = useSendTransaction()
 	const [accountName, setAccountName] = useState('ACCOUNT NAME')
 	const [isCheckingBankAccount, setIsCheckingBankAccount] = useState(false)
 	const [tokenLoading, setTokenLoading] = useState(false)
-
-	const { currentSelectedCoin } = useSelector((state) => state.user)
+	const {
+		currentSelectedCoin,
+		verificationToken,
+		accessToken,
+		currentUser,
+		currentSelectedOfframpCoin,
+	} = useSelector((state) => state.user)
 	const [receiveValue, setReceiveValue] = useState('')
 	const [sellValue, setSellValue] = useState(
 		currentSelectedCoin?.cryptoValue ?? '0'
@@ -57,6 +89,9 @@ export default function BuyCrypto() {
 		chainData.find((data) => data.chainId === chainId)
 	)
 
+	const filterByName = (nameInBank) => {
+		return nameInBank?.name === currentUser?.name
+	}
 	const {
 		isPending: isPendingApproval,
 		writeContractAsync: writeApprovalContract,
@@ -120,40 +155,46 @@ export default function BuyCrypto() {
 		periodCheckBank += 2500
 		return checkBankInquiry()
 	}
-	const { values, errors, handleBlur, handleChange, setFieldValue } = useFormik(
-		{
-			initialValues: {
-				email: '',
-				accountNumber: '',
-			},
-			validationSchema: yup.object({
-				accountNumber: yup.string().required('Account Number is required'),
-				email: yup
-					.string()
-					.email('Invalid Email')
-					.required('Email is required'),
-			}),
-			onSubmit: async (values) => {
-				console.log(values)
-				try {
-					// if (true) {
-					// await resetPasswordChange({
-					// 	url,
-					// 	password: values.password,
-					// 	password_confirmation: values.password_confirmation,
-					// })
-					// router.replace('/login')
-					// snackbar.success({
-					// 	title: account.password_has_been_reset,
-					// 	description: account.password_has_been_reset_desc,
-					// })
-					// }
-				} catch (error) {
-					console.log(error)
+	const {
+		values,
+		errors,
+		handleBlur,
+		handleChange,
+		setFieldValue,
+		handleSubmit,
+	} = useFormik({
+		initialValues: {
+			email: '',
+			accountNumber: '',
+			cryptoValue: currentSelectedOfframpCoin?.cryptoValue,
+			idrValue: '',
+			walletAddress: '',
+		},
+		validationSchema: yup.object({
+			cryptoValue: yup.string().required('Crypto value is required'),
+			idrValue: yup.string().required('IDR value is required'),
+			walletAddress: yup.string().required('Wallet address value is required'),
+		}),
+		onSubmit: async (values) => {
+			try {
+				const offrampData = await quoteAxios.post('/offramp', {
+					inputAmount: values.cryptoValue,
+					senderName: currentUser?.name,
+					walletAddress: values.walletAddress,
+					senderEmail: currentRecipient?.email,
+					receiverId: currentRecipient?.id,
+					inputCurrency: currentSelectedOfframpCoin?.id,
+					outputCurrency: currentSelectedOfframpCoin?.currency,
+				})
+				if (offrampData.status === 200) {
+					dispatch(setOfframpResult(offrampData?.data?.data))
+					router.push('/offramp-result')
 				}
-			},
-		}
-	)
+			} catch (error) {
+				console.log(error)
+			}
+		},
+	})
 
 	const addToWalletAccounts = () => {
 		axiosApi
@@ -248,96 +289,103 @@ export default function BuyCrypto() {
 		setAccountName('ACCOUNT NAME')
 	}
 
-	const { data: coinGeckoData } = useSWR(
-		`/markets?vs_currency=idr&ids=${currentSelectedCoin?.coingecko}`,
-		fetcher
+	const { data: recipientData, mutate: recipientMutate } = useSWR(
+		`/recipient?limit=1000`,
+		fetcherQuote
 	)
+
+	const recipientResult = recipientData?.data?.data?.docs
+	const filteredRecipient = recipientResult?.filter(filterByName)
+
+	const {
+		data: quoteData,
+		isLoading,
+		error: quoteError,
+	} = useSWR(
+		`/offramp/quote?amount=${parseFloat(
+			values.cryptoValue ?? '0'
+		)}&inputCurrency=${currentSelectedOfframpCoin?.id}&outputCurrency=${
+			currentSelectedOfframpCoin?.currency
+		}`,
+		fetcherQuote
+	)
+
+	const result = quoteData?.data?.data
 
 	const waitApproval =
 		isPendingApproval || approvalLoading || isPendingCoin || tokenLoading
 
 	useEffect(() => {
-		if (!currentSelectedCoin?.coingecko) {
-			router.push('/hyfen-ramp')
-			return
-		}
-		if (coinGeckoData) {
-			const idr = (
-				coinGeckoData.data[0].current_price * parseFloat(sellValue ?? '0')
-			).toFixed(0)
-
-			setReceiveValue(idr === 'NaN' ? '0' : idr)
-		}
-	}, [coinGeckoData])
-
-	useEffect(() => {
-		console.log(chainId)
 		setCurrentChain(chainData.find((data) => data.chainId === chainId))
 	}, [chainId])
 
-	// useEffect(() => {
-	// 	if (approvalSuccess) {
-	// 		writeCoinContract({
-	// 			address: `0x${currentChain?.seamlessContract}`,
-	// 			functionName: 'transfer_erc20',
-	// 			abi: seamlessAbi,
-	// 			args: [`0x${currentSelectedCoin?.contractAddress}`, 'token'],
-	// 			value: parseFloat(sellValue) * currentSelectedCoin?.decimals,
-	// 		})
-	// 			.then(() => {
-	// 				router.push('/success')
-	// 			})
-	// 			.catch((e) => {
-	// 				console.log(e)
-	// 			})
-	// 	}
-	// }, [isPendingApproval, approvalLoading, approvalSuccess])
+	useEffect(() => {
+		if (result) {
+			setFieldValue('idrValue', result?.amount_in_currency?.toFixed(2))
+		} else {
+			setFieldValue('idrValue', '0')
+		}
+	}, [result])
+
+	useEffect(() => {
+		if (selectedOption === 'hyfen') {
+			setFieldValue('address', address ?? '')
+		}
+	}, [address])
+
 	return (
 		<>
 			<Head>
 				<title>Hyfen GG | Buy Crypto</title>
 			</Head>
-			<main className='relative h-screen h-full pb-[200px] w-full bg-app-background'>
+			<main className='relative h-[120vh] h-full pb-[200px] w-full bg-app-background'>
 				{/* Container */}
 				<HeaderHyfen withWallet isLoading={waitApproval} />
 				<PaymentMethodModal
-					showModal={showModal}
-					setShowModal={setShowModal}
-					setSelectedProvider={setSelectedProvider}
-					resetValue={resetValue}
+					showModal={paymentModal}
+					setShowModal={setPaymentModal}
+					setPaymentMethod={setPaymentMethod}
+				/>
+				<RecipientModal
+					showModal={recipientModal}
+					setShowModal={setRecipientModal}
+					setPaymentMethod={setCurrentRecipient}
+					listResult={filteredRecipient}
 				/>
 				<div className='relative h-full w-full container mx-auto flex md:flex-row flex-col gap-y-5 gap-x-10 justify-center items-center h-full pt-[13vh]'>
 					{/* Container content */}
 					<div className='relative h-full flex flex-col justify-start items-center'>
 						<div className='bg-[#1A1E48] p-[30px] rounded-[10px]'>
-							<p className='text-white text-[20px] text-bold'>
-								Choose Provider
-							</p>
+							<p className='text-[20px] text-white font-bold'>Add Recipient</p>
 							<p className='text-[#9CA3AF] text-[16px] mt-5'>
-								Choose Provider*
+								Choose Payment Method*
 							</p>
 							<div
 								onClick={() => {
 									if (waitApproval) return
-									setShowModal(true)
+									setPaymentModal(true)
 								}}
-								className='border border-[#FFFFFF4D] cursor-pointer px-[12px] w-[436px] rounded-[11px] h-[65px] flex justify-between items-center mt-[15px]'
+								className='border border-[#FFFFFF4D] cursor-pointer px-[12px] md:w-[436px] rounded-[11px] h-[65px] flex justify-between items-center mt-[15px]'
 							>
 								<div className='flex gap-x-4 items-center'>
 									<Image
 										width={30}
 										height={30}
 										alt='provider'
-										src={selectedProvider.imgUrl}
+										src={paymentMethod?.image}
 										className='w-8 h-8 rounded-full'
 									/>
 									<p className='font-normal text-white'>
-										{selectedProvider.name}
+										{paymentMethod?.name}
 									</p>
 								</div>
 
 								<ArrowRight className='fill-current h-4 ' />
 							</div>
+							<p className='text-[#9CA3AF] text-[16px] mt-5'>
+								Flat Fee Amount:{' '}
+								{formatNumber(paymentMethod?.flatFeeAmount ?? '0')} IDR
+							</p>
 							<p className='text-[#9CA3AF] text-[16px] mt-5'>Account Number*</p>
 							<div className='flex gap-x-2 mt-2'>
 								<FormInput
@@ -360,41 +408,67 @@ export default function BuyCrypto() {
 									notes={errors.accountNumber}
 								/>
 							</div>
+							<p className='text-[#9CA3AF] text-[16px] mt-5'>Email Address*</p>
+							<FormInput
+								disabled={waitApproval}
+								placeholder={'Email Address'}
+								classRoot='flex-1 mt-2'
+								typeForm='email'
+								value={values.email}
+								onBlur={handleBlur}
+								onChange={handleChange}
+								name='email'
+								required={true}
+								type='email'
+								isError={errors.email}
+								notes={errors.email}
+							/>
 							<div className='mt-5 flex justify-center items-center'>
 								<a
 									onClick={async () => {
-										if (waitApproval) return
-										setIsCheckingBankAccount(true)
 										try {
-											setIsCheckingBankAccount(true)
-											periodCheckBank = 0
-											const getBankAccount = await checkBankInquiry()
-											setIsCheckingBankAccount(false)
-											if (getBankAccount?.data.status === 'TIME_OUT') {
+											const emailValidation = RegExp(
+												/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+											)
+											if (!emailValidation.test(values.email)) {
+												return Swal.fire('Invalid email format', '', 'info')
+											}
+											if (!values.email || !values.accountNumber) {
 												return Swal.fire(
-													'Time Out',
-													'Please try again a bit later.',
+													'Please fill in account number & email address',
+													'',
 													'info'
 												)
 											}
-											if (
-												getBankAccount?.data.status === 'INVALID_ACCOUNT_NUMBER'
-											) {
-												setAccountName('ACCOUNT NAME')
-												return Swal.fire(
-													'Error!',
-													'Bank account number invalid!',
-													'error'
-												)
-											}
-											setAccountName(getBankAccount?.data.account_holder)
-										} catch (e) {
-											setIsCheckingBankAccount(false)
+											await quoteAxios.post('/recipient', {
+												name: currentUser?.name,
+												email: values.email,
+												recipientType: 'Individual',
+												city: 'Singapore',
+												address: 'Singapore',
+												postCode: '1000',
+												bank: {
+													currency: currentSelectedOfframpCoin?.currency,
+													country: currentSelectedOfframpCoin?.country,
+													accountNumber:
+														values.accountNumber[0] === '0'
+															? parseInt('62' + values.accountNumber.slice(1))
+															: values.accountNumber,
+													paymentCode: paymentMethod?.code,
+													bankName: paymentMethod?.name,
+													accountName: currentUser?.name,
+												},
+											})
 											Swal.fire(
-												'Error!',
-												'Bank account number invalid!',
-												'error'
+												'Success!',
+												'Successfully added a recipient',
+												'success'
 											)
+											setFieldValue('email', '')
+											setFieldValue('accountNumber', '')
+											recipientMutate()
+										} catch (e) {
+											console.log(e)
 										}
 									}}
 									className={`w-fit flex gap-x-[12px] justify-start items-start text-center text-slate-900 bg-white header__download-button py-3 px-11 inline-block text-base font-bold cursor-pointer`}
@@ -417,99 +491,142 @@ export default function BuyCrypto() {
 										/>
 									) : (
 										<div className='flex items-center h-[30px]'>
-											<span>Check Account</span>
+											<span>Add Recipient</span>
 											<ArrowRightBlack />
 										</div>
 									)}
 								</a>
 							</div>
-							<FormInput
-								classRoot='flex-1 mt-5'
-								disabled
-								withIcon={false}
-								value={accountName}
-								onBlur={handleBlur}
-								onChange={() => {}}
-								required={true}
-							/>
 						</div>
 					</div>
 					<div className='relative h-full  flex flex-col justify-start items-start'>
-						<div className='bg-[#1A1E48] p-[30px] w-[450px] rounded-[10px]'>
-							<p className='text-white text-[20px] text-bold'>
-								Account Information
+						<div className='bg-[#1A1E48] p-[30px] w-fit rounded-[10px]'>
+							<p className='text-[#9CA3AF] text-[16px]'>Choose Recipient*</p>
+							<div
+								onClick={() => {
+									if (waitApproval) return
+									setRecipientModal(true)
+								}}
+								className='border border-[#FFFFFF4D] cursor-pointer px-[12px] w-full rounded-[11px] h-[65px] flex justify-between items-center mt-[15px]'
+							>
+								{currentRecipient?.name ? (
+									<div className='flex justify-between items-center w-full'>
+										<div className='flex gap-x-4 items-center'>
+											<Image
+												width={30}
+												height={30}
+												alt='provider'
+												src={
+													onrampPaymentMethod?.find(
+														(data) =>
+															data.code === currentRecipient?.paymentCode
+													)?.image
+												}
+												className='w-8 h-8 rounded-full'
+											/>
+											<div className='flex flex-col'>
+												<p className='font-normal text-white'>
+													{currentRecipient?.bankName}
+												</p>
+												<p className='font-normal text-[13px] text-[#9CA3AF]'>
+													{currentRecipient?.accountNumber}
+												</p>
+											</div>
+										</div>
+
+										<ArrowRight className='fill-current h-4 ' />
+									</div>
+								) : (
+									<p className='text-white'>Select recipient...</p>
+								)}
+							</div>
+							<p className='text-[#9CA3AF] text-[16px] mt-5'>
+								Wallet Address That Sends The Crypto*
 							</p>
+							<form className='flex gap-x-4 mt-2'>
+								<div className='radio'>
+									<label className='text-white flex gap-x-2 items-center'>
+										<input
+											onChange={() => {
+												setSelectedOption('input')
+												setFieldValue('walletAddress', '')
+											}}
+											type='radio'
+											value='option1'
+											checked={selectedOption === 'input'}
+										/>
+										<span className='text-[13px]'>Input custom address</span>
+									</label>
+								</div>
+								<div className='radio'>
+									<label className='text-white flex gap-x-2 items-center'>
+										<input
+											onChange={() => {
+												setSelectedOption('hyfen')
+												setFieldValue('walletAddress', address)
+											}}
+											type='radio'
+											value='option2'
+											checked={selectedOption === 'hyfen'}
+										/>
+										<span className='text-[13px]'>
+											Use connected wallet address
+										</span>
+									</label>
+								</div>
+							</form>
 							<FormInput
-								disabled={waitApproval}
+								disabled={selectedOption === 'hyfen'}
 								classRoot='mt-5'
-								label={'Email Address'}
-								placeholder={'Email Address'}
-								typeForm='email'
-								value={values.email}
+								withIcon={false}
+								placeholder={'Input wallet address here'}
+								// typeForm='email'
+								value={values.walletAddress}
 								onBlur={handleBlur}
 								onChange={handleChange}
-								name='email'
+								name='walletAddress'
 								required={true}
-								type='email'
-								isError={errors.email}
-								notes={errors.email}
+								isError={errors.walletAddress}
+								notes={errors.walletAddress}
 							/>
 							<p className='text-white mt-5 text-[20px] text-bold'>
 								Sell Crypto Breakdown
 							</p>
 							<div>
 								<div className='flex justify-between items-center gap-x-3 mt-4'>
-									<p className='text-white'>You will receive</p>
+									<p className='text-white md:text-[16px] text-[12px]'>
+										You sell
+									</p>
 									<CurrencyInput
-										disabled={waitApproval}
-										placeholder='0'
-										decimalsLimit={6}
-										value={receiveValue}
-										onValueChange={(value) => {
-											const idrValueFloat = parseFloat(value ?? '0')
-											setReceiveValue(
-												idrValueFloat.toFixed(0) === 'Nan'
-													? '0'
-													: idrValueFloat.toFixed(0)
-											)
-											if (coinGeckoData) {
-												const crypto = (
-													(1 / coinGeckoData.data[0].current_price) *
-													idrValueFloat
-												).toFixed(6)
-												setSellValue(crypto === 'NaN' ? '0' : crypto)
-											}
-										}}
-										className='relative p-[16px] focus:outline-none focus:ring-0 focus:border-app-purple/50 rounded-[10px] text-label text-white bg-app-background border border-app-disabled/20 placeholder:capitalize disabled:opacity-60'
-									/>
-									<p className='text-white'>IDR</p>
-								</div>
-								<div className='flex justify-between items-center gap-x-3 mt-4'>
-									<p className='text-white'>You sell</p>
-									<CurrencyInput
-										disabled={waitApproval}
 										placeholder='0'
 										defaultValue={parseFloat(
 											currentSelectedCoin?.cryptoValue ?? '0'
 										)}
 										decimalsLimit={6}
-										value={sellValue}
+										value={values.cryptoValue}
 										onValueChange={(value) => {
-											if (value === receiveValue) return
-											setSellValue(value ?? '0')
-											if (coinGeckoData) {
-												const idr = (
-													coinGeckoData.data[0].current_price *
-													parseFloat(value ?? '0')
-												).toFixed(0)
-
-												setReceiveValue(idr === 'NaN' ? '0' : idr)
-											}
+											setFieldValue('cryptoValue', value)
 										}}
 										className='relative p-[16px] focus:outline-none focus:ring-0 focus:border-app-purple/50 rounded-[10px] text-label text-white bg-app-background border border-app-disabled/20 placeholder:capitalize disabled:opacity-60'
 									/>
-									<p className='text-white'>{currentSelectedCoin?.name}</p>
+									<p className='text-white'>
+										{currentSelectedOfframpCoin?.cryptoName}
+									</p>
 								</div>
+								<div className='flex justify-between items-center gap-x-3 mt-4'>
+									<p className='text-white md:text-[16px] text-[12px]'>
+										You will receive
+									</p>
+									<CurrencyInput
+										disabled
+										placeholder='0'
+										decimalsLimit={6}
+										value={values.idrValue}
+										className='relative p-[16px] focus:outline-none focus:ring-0 focus:border-app-purple/50 rounded-[10px] text-label text-white bg-app-background border border-app-disabled/20 placeholder:capitalize disabled:opacity-60'
+									/>
+									<p className='text-white'>IDR</p>
+								</div>
+
 								{/* <div className='flex justify-between mt-4'>
 									<p className='text-white'>Tax & Services</p>
 									<p className='text-white'>10 SLP</p>
@@ -523,130 +640,51 @@ export default function BuyCrypto() {
 								<div className='flex justify-between mt-7'>
 									<p className='text-white text-[20px]'>Total Payment</p>
 									<p className='text-white text-[20px]'>
-										{sellValue} {currentSelectedCoin?.name}
+										{values.cryptoValue}{' '}
+										{currentSelectedOfframpCoin?.cryptoName}
 									</p>
 								</div>
 							</div>
 							<div className='mt-[30px] flex justify-center items-center'>
 								<a
 									onClick={async () => {
-										if (!coinGeckoData) {
-											return Swal.fire({
-												icon: 'info',
-												title: 'Internal Error',
-												text: 'Please wait for a few seconds!',
-											})
+										if (isLoading || parseFloat(values.idrValue ?? '0') < 50000)
+											return
+										if (!currentRecipient?.name) {
+											return Swal.fire('Please fill in a recipient', '', 'info')
 										}
-										if (waitApproval) return
-										if (insufficientBalance) return
-										if (!address) {
-											return Swal.fire({
-												icon: 'info',
-												title: 'Check Wallet',
-												text: 'Please connect your wallet!',
-											})
-										}
-										if (chainId !== 1 && chainId !== 42161) {
-											return Swal.fire({
-												icon: 'info',
-												title: 'Check Network',
-												text: 'Network not supported!',
-											})
-										}
-										if (accountName === 'ACCOUNT NAME') {
-											return Swal.fire({
-												icon: 'info',
-												title: 'Check Account',
-												text: 'Please check your account!',
-											})
-										}
-										if (
-											errors.email ||
-											errors.accountNumber ||
-											sellValue <= 0 ||
-											receiveValue <= 0
-										) {
-											return Swal.fire({
-												icon: 'info',
-												title: 'Fill All Fields',
-												text: 'Please fill all required fields!',
-											})
-										}
-										addToWalletAccounts()
-										if (!currentSelectedCoin?.native) {
-											try {
-												const tx = await writeApprovalContract({
-													chainId,
-													abi: erc20Abi,
-													address: `0x${
-														currentChain?.tokenData?.find(
-															(token) =>
-																token?.name === currentSelectedCoin?.name
-														)?.contractAddress ??
-														'dac17f958d2ee523a2206206994597c13d831ec7'
-													}`,
-													functionName: 'transfer',
-													args: [
-														process.env.NEXT_PUBLIC_VAULT_ADDRESS,
-														parseFloat(sellValue) *
-															currentSelectedCoin?.decimals,
-													],
-												})
-												if (tx) {
-													addToTransactionHistory('Blockchain', tx)
-												}
-											} catch (e) {
-												console.log(e)
-											}
-										} else {
-											try {
-												setTokenLoading(true)
-												const tx = await sendTransactionAsync({
-													to: process.env.NEXT_PUBLIC_VAULT_ADDRESS,
-													value: parseEther(sellValue),
-												})
-												if (tx) {
-													addToTransactionHistory('Blockchain', tx)
-												}
-												setTokenLoading(false)
-											} catch (e) {
-												setTokenLoading(false)
-												console.log(e)
-											}
-										}
+										handleSubmit()
+
+										// if (quoteLoading || disableSwap) return
+										// console.log(sendTransaction)
+										// sendTransaction()
 									}}
-									className={`${
-										insufficientBalance
-											? 'cursor-not-allowed bg-[#712F30] text-white border border-[#712F30] header__download-button-disabled'
-											: 'cursor-pointer bg-white text-slate-900 border-white header__download-button'
-									} w-full flex items-center gap-x-[12px] justify-center text-center py-3 px-11 inline-block text-base font-bold`}
+									className={`w-full flex items-center gap-x-[12px] justify-center  text-center text-slate-900 ${
+										isLoading || parseFloat(values.idrValue ?? '0') < 50000
+											? 'bg-[#888888] header__download-button-disabled'
+											: 'bg-white header__download-button'
+									} py-3 px-11 inline-block text-base font-bold ${
+										isLoading || parseFloat(values.idrValue ?? '0') < 50000
+											? 'cursor-not-allowed'
+											: 'cursor-pointer'
+									}`}
 								>
-									{waitApproval ? (
-										<ColorRing
-											visible={true}
+									{isLoading ? (
+										<Circles
 											height='30'
 											width='30'
-											ariaLabel='blocks-loading'
-											wrapperStyle={{}}
-											wrapperClass='blocks-wrapper'
-											colors={[
-												'#e15b64',
-												'#f47e60',
-												'#f8b26a',
-												'#abbd81',
-												'#849b87',
-											]}
+											radius='2'
+											color='green'
+											ariaLabel='loading'
 										/>
 									) : (
-										<div className='flex items-center gap-x-2 h-[30px]'>
+										<div className='flex items-center h-[30px]'>
 											<span>
-												{insufficientBalance
-													? `Insufficient ${currentSelectedCoin?.name}`
-													: 'Buy Now'}
-											</span>{' '}
-											<ArrowRightBlack
-												fill={insufficientBalance ? 'white' : '#000'}
-											/>
+												{parseFloat(values.idrValue ?? '0') < 50000
+													? 'Minimum 50,000 IDR'
+													: 'Confirm'}
+											</span>
+											<ArrowRightBlack />
 										</div>
 									)}
 								</a>

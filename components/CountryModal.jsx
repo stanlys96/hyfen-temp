@@ -22,7 +22,7 @@ function CountryModal({ showModal, setShowModal, setFieldValue }) {
 				className='z-100 bg-[#828282]/50 dark:bg-[#101016CC] backdrop-blur-sm w-full sm:p-5 md:p-10 fixed top-0 left-0 items-center justify-center flex h-full'
 				style={{ opacity: 1 }}
 			>
-				<div>
+				<div className='w-5/6 md:w-fit'>
 					<div className='bg-[#332D9B] py-[20px] px-[30px] rounded-t-[10px] flex items-center'>
 						<div className='flex items-center gap-x-[10px] z-100'>
 							<a

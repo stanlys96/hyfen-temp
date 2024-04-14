@@ -7,7 +7,7 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { fetcherFlip } from '../utils/axios'
 // asd
-function PaymentMethodModal({
+function FlipPaymentMethodModal({
 	showModal,
 	setShowModal,
 	setSelectedProvider,
@@ -151,4 +151,4 @@ function PaymentMethodModal({
 	)
 }
 
-export default PaymentMethodModal
+export default FlipPaymentMethodModal

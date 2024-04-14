@@ -14,6 +14,7 @@ import { fetcherQuote } from '../../utils/axios'
 import { useEffect, useState } from 'react'
 import { Circles } from 'react-loader-spinner'
 import OnRampModal from './OnRampModal'
+import CurrencyModal from './CurrencyModal'
 
 export const BuyComponent = () => {
 	const router = useRouter()
@@ -40,10 +41,29 @@ export const BuyComponent = () => {
 		network: 'polygon',
 		transactionType: ['offramp', 'onramp'],
 	})
+	const [showCurrencyModal, setShowCurrencyModal] = useState(false)
+	const [currentSelectedCurrency, setCurrentSelectedCurrency] = useState({
+		_id: '64dae2066acf6644dd1a3c76',
+		value: 'INDONESIA',
+		country: 'Indonesia',
+		currency: 'IDR',
+		countryCode: 'ID',
+		logo: '/img/idr.svg',
+		name: 'Indonesian Rupiah',
+		requireBankName: true,
+		requireIfsc: false,
+		requireIban: false,
+		requireAchOrWire: false,
+		requireAccountNumber: true,
+		symbol: 'Rp',
+		randomNumber: 3,
+		isRandomNumberDecimal: false,
+		id: '64dae2066acf6644dd1a3c76',
+	})
 	const { data: quoteData, isLoading } = useSWR(
-		`/onramp/quote?amount=${parseFloat(
-			idrValue ?? '0'
-		)}&inputCurrency=idr&outputCurrency=${currentSelectedCoin?.id}`,
+		`/onramp/quote?amount=${parseFloat(idrValue ?? '0')}&inputCurrency=${
+			currentSelectedCurrency?.currency
+		}&outputCurrency=${currentSelectedCoin?.id}`,
 		fetcherQuote
 	)
 
@@ -61,6 +81,14 @@ export const BuyComponent = () => {
 				showModal={showModal}
 				setShowModal={setShowModal}
 				setCurrenctSelectedCoin={setCurrenctSelectedCoin}
+				setCurrentSelectedCurrency={setCurrentSelectedCurrency}
+				type='onramp'
+			/>
+			<CurrencyModal
+				showModal={showCurrencyModal}
+				setShowModal={setShowCurrencyModal}
+				setCurrentSelectedCurrency={setCurrentSelectedCurrency}
+				availableCurrencies={currentSelectedCoin?.currencies ?? []}
 			/>
 			<div className='w-[330px] md:w-[340px] pt-[30px]'>
 				<div className='flex flex-col justify-between'>
@@ -96,9 +124,18 @@ export const BuyComponent = () => {
 								className={`h-full text-[16px] md:text-[16px] text-cute bg-transparent font-bold sm:max-w-full outline-none border-none w-full`}
 							/>
 						</div>
-						<div className='flex justify-center items-center gap-x-[12px] cursor-pointer'>
-							<Rupiah />
-							<p>IDR</p>
+						<div
+							onClick={() => setShowCurrencyModal(true)}
+							className='flex justify-center items-center gap-x-[12px] cursor-pointer'
+						>
+							<Image
+								width={30}
+								height={30}
+								src={currentSelectedCurrency?.logo}
+								alt={currentSelectedCurrency?.name}
+								className='rounded-full'
+							/>
+							<p>{currentSelectedCurrency?.currency}</p>
 							<ArrowDown className='fill-current h-4 ' />
 						</div>
 					</div>

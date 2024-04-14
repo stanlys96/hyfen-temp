@@ -63,7 +63,7 @@ export default function InputOTP({ value, onChange, valueLength, isError }) {
 	}
 
 	return (
-		<div className='relative flex gap-[30px] mt-[33px]'>
+		<div className='relative flex gap-[30px] mt-[33px] flex-wrap md:flex-nowrap items-center justify-center'>
 			{valueItems.map((digit, idx) => (
 				<input
 					key={idx}

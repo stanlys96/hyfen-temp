@@ -191,21 +191,7 @@ export default function HyfenRamp() {
 							</div>
 						</div>
 						{currentCategory === 0 && <BuyComponent />}
-						{currentCategory === 1 && (
-							<SellComponent
-								idrValue={idrValue}
-								setIdrValue={setIdrValue}
-								setCryptoValue={setCryptoValue}
-								setShowModal={setShowModal}
-								cryptoValue={cryptoValue}
-								currentCategory={currentCategory}
-								data={data}
-								router={router}
-								currentSelectedCoin={currentSelectedCoin}
-								insufficientBalance={insufficientBalance}
-								usedBalance={usedBalance}
-							/>
-						)}
+						{currentCategory === 1 && <SellComponent />}
 						{currentCategory === 2 && (
 							<SwapComponent
 								quoteLoading={quoteLoading}

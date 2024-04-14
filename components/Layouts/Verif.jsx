@@ -19,11 +19,11 @@ export default function Verif({
 			<Head>
 				<title>Hyfen Tools | {title}</title>
 			</Head>
-			<main className='relative h-screen max-h-full w-full bg-app-background'>
+			<main className='relative md:h-screen min-h-[100vh] md:max-h-full w-full bg-app-background'>
 				{/* Container */}
-				<div className='relative h-full max-w-7xl container mx-auto'>
+				<div className='relative h-full max-w-7xl container mx-auto '>
 					{/* Container content */}
-					<div className='relative h-full flex flex-col justify-center items-center'>
+					<div className='relative h-full flex flex-col justify-center items-center pt-[100px] md:pt-0'>
 						{/* Icon  */}
 						{withIcon && (
 							<div className='relative flex justify-center p-4 items-center h-[82px] w-[82px] rounded-full bg-app-shade/40'>
@@ -39,7 +39,7 @@ export default function Verif({
 
 						{/* Text and Description */}
 						<HeadingAuth
-							className='text-center mt-[30px]'
+							className='text-center md:mt-[30px]'
 							heading={heading ?? ''}
 							desc={desc ?? ''}
 							desc2={desc2 ?? ''}

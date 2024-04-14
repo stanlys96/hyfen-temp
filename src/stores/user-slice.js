@@ -18,6 +18,15 @@ const initialState = {
 		cryptoName: '',
 		id: '',
 	},
+	currentSelectedOfframpCoin: {
+		cryptoValue: '',
+		logo: '',
+		network: '',
+		priceId: '',
+		currency: '',
+		id: '',
+		country: '',
+	},
 	onrampResult: {
 		network: '',
 		cryptoName: '',
@@ -31,6 +40,8 @@ const initialState = {
 		group: '',
 		cryptoImg: '',
 	},
+	offrampResult: {},
+	currentUser: {},
 }
 
 export const userSlice = createSlice({
@@ -67,6 +78,15 @@ export const userSlice = createSlice({
 		setOnrampResult: (state, action) => {
 			state.onrampResult = action.payload
 		},
+		setCurrentUser: (state, action) => {
+			state.currentUser = action.payload
+		},
+		setCurrentSelectedOfframpCoin: (state, action) => {
+			state.currentSelectedOfframpCoin = action.payload
+		},
+		setOfframpResult: (state, action) => {
+			state.offrampResult = action.payload
+		},
 	},
 })
 
@@ -91,5 +111,8 @@ export const {
 	setMethod,
 	setCurrentSelectedOnrampCoin,
 	setOnrampResult,
+	setCurrentUser,
+	setCurrentSelectedOfframpCoin,
+	setOfframpResult,
 } = actions
 export default reducer

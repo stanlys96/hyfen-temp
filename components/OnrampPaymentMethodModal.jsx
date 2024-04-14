@@ -6,11 +6,7 @@ import { formatNumber } from '../utils/helper'
 import Image from 'next/image'
 import { onrampPaymentMethod } from '../utils/helper'
 // asd
-function OnrampPaymentMethodModal({
-	showModal,
-	setShowModal,
-	setPaymentMethod,
-}) {
+function PaymentMethodModal({ showModal, setShowModal, setPaymentMethod }) {
 	const [searchValue, setSearchValue] = useState('')
 
 	const filterBank = (bankData) => {
@@ -61,7 +57,7 @@ function OnrampPaymentMethodModal({
 								// notes={errors.email}
 							/>
 						</div>
-						<div className='w-[400px] overflow-y-auto h-[500px] max-h-[60vh]'>
+						<div className='md:w-[400px] overflow-y-auto h-[500px] max-h-[60vh]'>
 							{listResult?.map((result) => (
 								<div
 									key={result.code}
@@ -113,4 +109,4 @@ function OnrampPaymentMethodModal({
 	)
 }
 
-export default OnrampPaymentMethodModal
+export default PaymentMethodModal

@@ -106,6 +106,7 @@ export const SwapComponent = ({
 			onSuccess: (data) => {
 				setPrice(data)
 				refetch()
+				console.log(data, '<<< DATA')
 				if (tradeDirection === 'sell') {
 					setBuyAmount(
 						parseFloat(formatUnits(data.buyAmount, buyTokenDecimals)).toFixed(2)
