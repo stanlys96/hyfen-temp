@@ -14,7 +14,7 @@ import CurrencyInput from 'react-currency-input-field'
 import { formatNumber } from '../utils/helper'
 import { useAccount } from 'wagmi'
 import useSWR from 'swr'
-import { fetcherQuote, quoteAxios } from '../utils/axios'
+import { fetcherQuote, quoteAxios, axiosSecondary } from '../utils/axios'
 import { Circles } from 'react-loader-spinner'
 import Image from 'next/image'
 import PaymentMethodModal from '../components/OnrampPaymentMethodModal'
@@ -74,12 +74,8 @@ export default function BuyCrypto() {
 					description: 'Create onramp',
 					withLimit: false,
 				})
-				const win = window?.open(
-					data?.data?.data?.acceptanceDetail?.frontend_url
-				)
-				if (win != null) {
-					win.focus()
-				}
+				window.open(data?.data?.data?.acceptanceDetail?.frontend_url)
+
 				dispatch(
 					setOnrampResult({
 						address,

@@ -29,7 +29,7 @@ const EnterCode = ({ changeStep, email, showCounter = true }) => {
 	const [counter, setCounter] = useState(60)
 	const [isError, setisError] = useState(false)
 	const { verificationToken, password } = useSelector((state) => state.user)
-
+	console.log(email, '<<< EMAIL')
 	const onResend = async () => {
 		try {
 			if (email) {
@@ -56,14 +56,22 @@ const EnterCode = ({ changeStep, email, showCounter = true }) => {
 		const currentEmail = await axiosSecondary.get(
 			`/user-recipients?filters[email][$eq]=${email}`
 		)
-		const emailData = currentEmail?.data?.data?.[0]
-		console.log(emailData.attributes)
+		let emailData
+		if (currentEmail.data.data.length === 0) {
+			const newEmail = await axiosSecondary.post('/user-recipients', {
+				data: {
+					email: email,
+				},
+			})
+			emailData = newEmail?.data?.data
+		} else {
+			emailData = currentEmail?.data?.data?.[0]
+		}
 		try {
 			const result = await axiosBackend.post('/auth/verify-login', {
 				verificationToken,
 				otp,
 			})
-			console.log(result)
 			if (result?.data?.message === 'ok') {
 				dispatch(setAccessToken(result?.data?.data?.accessToken))
 				if (emailData) {

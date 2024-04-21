@@ -262,8 +262,12 @@ export default function BuyCrypto() {
 													'info'
 												)
 											}
+											console.log(currentUser)
+											console.log(paymentMethod)
 											await quoteAxios.post('/recipient', {
-												name: currentUser?.name,
+												name: !currentUser?.name
+													? values.email
+													: currentUser?.name,
 												email: values.email,
 												recipientType: 'Individual',
 												city: 'Singapore',
@@ -278,7 +282,9 @@ export default function BuyCrypto() {
 															: values.accountNumber,
 													paymentCode: paymentMethod?.code,
 													bankName: paymentMethod?.name,
-													accountName: currentUser?.name,
+													accountName: !currentUser?.name
+														? values.email
+														: currentUser?.name,
 												},
 											})
 											Swal.fire(

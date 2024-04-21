@@ -8,7 +8,11 @@ import { useRouter } from 'next/router'
 import { HeaderHyfen } from '../components/HeaderHyfen'
 import { axiosBackend, axiosSecondary } from '../utils/axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCurrentUser, setVerificationToken } from '../src/stores/user-slice'
+import {
+	setCurrentUser,
+	setEmail,
+	setVerificationToken,
+} from '../src/stores/user-slice'
 import Swal from 'sweetalert2'
 import { setAccessToken } from '../src/stores/user-slice'
 
@@ -44,6 +48,7 @@ const ForgotPassword = () => {
 						const theUser = await axiosSecondary.get(
 							`/user-recipients?filters[email][$eq]=${formValues.email}`
 						)
+						console.log(theUser, '<<< ???')
 						const currentUser = theUser?.data?.data?.[0]
 						console.log(currentUser, '<<< CURRENT USER')
 						dispatch(setVerificationToken(data?.data?.data?.verificationToken))
@@ -52,8 +57,10 @@ const ForgotPassword = () => {
 							setCurrentUser({
 								id: currentUser?.id,
 								...currentUser?.attributes,
+								email: formValues.email,
 							})
 						)
+						dispatch(setEmail(formValues.email))
 						if (currentUser?.attributes?.access_token) {
 							if (method === 'buy') {
 								router.replace('/buy-crypto')
