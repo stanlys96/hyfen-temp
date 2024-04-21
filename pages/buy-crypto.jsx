@@ -74,7 +74,12 @@ export default function BuyCrypto() {
 					description: 'Create onramp',
 					withLimit: false,
 				})
-				open(data?.data?.data?.acceptanceDetail?.frontend_url, '_blank')
+				const win = window?.open(
+					data?.data?.data?.acceptanceDetail?.frontend_url
+				)
+				if (win != null) {
+					win.focus()
+				}
 				dispatch(
 					setOnrampResult({
 						address,

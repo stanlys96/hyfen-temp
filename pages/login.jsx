@@ -39,11 +39,13 @@ const ForgotPassword = () => {
 						email: formValues.email,
 						password: formValues.password,
 					})
+					console.log(data, '<<<')
 					if (data?.data?.statusCode === 200) {
 						const theUser = await axiosSecondary.get(
 							`/user-recipients?filters[email][$eq]=${formValues.email}`
 						)
 						const currentUser = theUser?.data?.data?.[0]
+						console.log(currentUser, '<<< CURRENT USER')
 						dispatch(setVerificationToken(data?.data?.data?.verificationToken))
 						dispatch(setAccessToken(currentUser?.attributes?.access_token))
 						dispatch(
@@ -52,10 +54,14 @@ const ForgotPassword = () => {
 								...currentUser?.attributes,
 							})
 						)
-						if (method === 'buy') {
-							router.replace('/buy-crypto')
+						if (currentUser?.attributes?.access_token) {
+							if (method === 'buy') {
+								router.replace('/buy-crypto')
+							} else {
+								router.replace('/sell-crypto')
+							}
 						} else {
-							router.replace('/sell-crypto')
+							router.replace('/code-verif')
 						}
 					}
 				} catch (error) {
