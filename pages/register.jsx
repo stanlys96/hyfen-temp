@@ -17,7 +17,6 @@ import {
 	setPassword,
 	setVerificationToken,
 } from '../src/stores/user-slice'
-import { axiosSecondary } from '../utils/axios'
 
 const ForgotPassword = () => {
 	const dispatch = useDispatch()
@@ -78,7 +77,7 @@ const ForgotPassword = () => {
 						email: values.email,
 					})
 					try {
-						const response = await loginAxios.post('/userRampable/register', {
+						await loginAxios.post('/userRampable/register', {
 							full_name: values.fullName,
 							national_id: values.nationalID,
 							country_code: values.country.code,
@@ -95,7 +94,7 @@ const ForgotPassword = () => {
 						dispatch(
 							setVerificationToken(result?.data?.data?.verificationToken)
 						)
-						const updateUser = await loginAxios.post('/userRampable/update', {
+						await loginAxios.post('/userRampable/update', {
 							email: values.email,
 							verification_token: result?.data?.data?.verificationToken,
 							access_token: 'xxx',

@@ -6,7 +6,7 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import { HeaderHyfen } from '../components/HeaderHyfen'
-import { axiosBackend, axiosSecondary, loginAxios } from '../utils/axios'
+import { axiosBackend, loginAxios } from '../utils/axios'
 import { useDispatch, useSelector } from 'react-redux'
 import {
 	setCurrentUser,
@@ -43,7 +43,6 @@ const ForgotPassword = () => {
 						email: formValues.email,
 						password: formValues.password,
 					})
-					console.log(data, '<<<')
 					if (data?.data?.statusCode === 200) {
 						const currentUser = await loginAxios.post('/userRampable/login', {
 							email: formValues.email,

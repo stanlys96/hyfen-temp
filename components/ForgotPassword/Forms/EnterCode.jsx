@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ButtonAuth from '../../atoms/ButtonAuth'
 import ButtonV2 from '../../atoms/ButtonV2'
 import InputOTP from '../../atoms/InputOTP'
-import { axiosBackend, axiosSecondary, loginAxios } from '../../../utils/axios'
+import { axiosBackend, loginAxios } from '../../../utils/axios'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
@@ -66,7 +66,7 @@ const EnterCode = ({ changeStep, email, showCounter = true }) => {
 			console.log(result?.data?.data?.accessToken, '<<<')
 			if (result?.data?.message === 'ok') {
 				dispatch(setAccessToken(result?.data?.data?.accessToken))
-				const updateUser = await loginAxios.post('/userRampable/update', {
+				await loginAxios.post('/userRampable/update', {
 					email: email,
 					verification_token:
 						currentUser?.data?.data?.verification_token ?? 'xxx',

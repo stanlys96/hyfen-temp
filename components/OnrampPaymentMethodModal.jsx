@@ -4,9 +4,6 @@ import { FormInput } from './molecules/FormInput'
 import { useState, useEffect } from 'react'
 import { formatNumber } from '../utils/helper'
 import Image from 'next/image'
-import { onrampPaymentMethod } from '../utils/helper'
-import useSWR from 'swr'
-import { fetcherQuote } from '../utils/axios'
 // asd
 function PaymentMethodModal({
 	showModal,
@@ -25,9 +22,9 @@ function PaymentMethodModal({
 		)
 	}
 
-	const sortBank = (a, b) => {
-		return a.flatFeeAmount - b.flatFeeAmount
-	}
+	// const sortBank = (a, b) => {
+	// 	return a.flatFeeAmount - b.flatFeeAmount
+	// }
 
 	const listResult = paymentList?.filter(filterBank)
 
