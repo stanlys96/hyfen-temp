@@ -14,4 +14,7 @@ module.exports = nextTranslate({
 	env: {
 		BASE_URL: process.env.BASE_URL,
 	},
+	images: {
+		domains: ['cdn.rampable.co'],
+	},
 })

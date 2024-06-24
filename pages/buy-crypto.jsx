@@ -31,17 +31,16 @@ export default function BuyCrypto() {
 	const { currentSelectedOnrampCoin } = useSelector((state) => state.user)
 	const [paymentModal, setPaymentModal] = useState(false)
 
-	const [paymentMethod, setPaymentMethod] = useState({
-		name: 'Virtual Account Mandiri',
-		code: 'virtual_account_mandiri',
-		group: 'virtual_account',
-		currency: 'IDR',
-		image: '/img/mandiri.png',
-		isActive: true,
-		flatFeeAmount: 2000,
-		percentFeeAmount: 0,
-		id: '65ae07a34bbef2a538a672e4',
-	})
+	const { data: paymentData } = useSWR(
+		`/reference/payment-methods`,
+		fetcherQuote
+	)
+
+	const paymentResult = paymentData?.data?.data
+
+	const [paymentMethod, setPaymentMethod] = useState(
+		paymentResult?.find((data) => data.code === 'virtual_account_mandiri')
+	)
 
 	const {
 		values,
@@ -74,6 +73,7 @@ export default function BuyCrypto() {
 					description: 'Create onramp',
 					withLimit: false,
 				})
+				console.log(data, '<<< DATA')
 				window.open(data?.data?.data?.acceptanceDetail?.frontend_url)
 
 				dispatch(
@@ -104,6 +104,14 @@ export default function BuyCrypto() {
 	const result = quoteData?.data?.data
 
 	useEffect(() => {
+		if (!paymentMethod) {
+			setPaymentMethod(
+				paymentResult?.find((data) => data.code === 'virtual_account_mandiri')
+			)
+		}
+	}, [paymentResult])
+
+	useEffect(() => {
 		if (result) {
 			setCryptoValue(result?.total_received_amount_in_crypto?.toFixed(2))
 		} else {
@@ -129,6 +137,7 @@ export default function BuyCrypto() {
 					showModal={paymentModal}
 					setShowModal={setPaymentModal}
 					setPaymentMethod={setPaymentMethod}
+					paymentResult={paymentResult}
 				/>
 				<div className='relative h-full max-w-7xl container mx-auto flex md:flex-row flex-col gap-x-5 justify-center items-center h-full pt-[15vh]'>
 					{/* Container content */}

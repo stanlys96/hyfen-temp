@@ -6,7 +6,7 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import { HeaderHyfen } from '../components/HeaderHyfen'
-import { axiosBackend, axiosSecondary } from '../utils/axios'
+import { axiosBackend, axiosSecondary, loginAxios } from '../utils/axios'
 import { useDispatch, useSelector } from 'react-redux'
 import {
 	setCurrentUser,
@@ -45,23 +45,24 @@ const ForgotPassword = () => {
 					})
 					console.log(data, '<<<')
 					if (data?.data?.statusCode === 200) {
-						const theUser = await axiosSecondary.get(
-							`/user-recipients?filters[email][$eq]=${formValues.email}`
-						)
-						console.log(theUser, '<<< ???')
-						const currentUser = theUser?.data?.data?.[0]
-						console.log(currentUser, '<<< CURRENT USER')
+						const currentUser = await loginAxios.post('/userRampable/login', {
+							email: formValues.email,
+							password: formValues.password,
+						})
 						dispatch(setVerificationToken(data?.data?.data?.verificationToken))
-						dispatch(setAccessToken(currentUser?.attributes?.access_token))
+						dispatch(setAccessToken(currentUser?.data?.data?.access_token))
 						dispatch(
 							setCurrentUser({
 								id: currentUser?.id,
-								...currentUser?.attributes,
+								...currentUser?.data?.data,
 								email: formValues.email,
 							})
 						)
 						dispatch(setEmail(formValues.email))
-						if (currentUser?.attributes?.access_token) {
+						if (
+							currentUser?.data?.data?.access_token &&
+							currentUser?.data?.data?.access_token !== 'xxx'
+						) {
 							if (method === 'buy') {
 								router.replace('/buy-crypto')
 							} else {

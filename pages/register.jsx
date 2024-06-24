@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 import { HeaderHyfen } from '../components/HeaderHyfen'
 import { ArrowRight } from '../components/Icons'
 import CountryModal from '../components/CountryModal'
-import { axiosBackend } from '../utils/axios'
+import { axiosBackend, loginAxios } from '../utils/axios'
 import Swal from 'sweetalert2'
 import { useDispatch } from 'react-redux'
 import {
@@ -78,23 +78,30 @@ const ForgotPassword = () => {
 						email: values.email,
 					})
 					try {
-						await axiosSecondary.post('/user-recipients', {
-							data: {
-								email: values.email,
-								name: values.fullName,
-								country: values.country.name,
-								country_code: values.country.code,
-								access_token: '',
-							},
+						const response = await loginAxios.post('/userRampable/register', {
+							full_name: values.fullName,
+							national_id: values.nationalID,
+							country_code: values.country.code,
+							country: values.country.name,
+							password: values.password,
+							email: values.email,
 						})
 					} catch (e) {
 						console.log(e)
 					}
+
 					if (result?.data?.statusCode === 200) {
 						dispatch(setEmail(values.email))
 						dispatch(
 							setVerificationToken(result?.data?.data?.verificationToken)
 						)
+						const updateUser = await loginAxios.post('/userRampable/update', {
+							email: values.email,
+							verification_token: result?.data?.data?.verificationToken,
+							access_token: 'xxx',
+							organization_id: 'xxx',
+							organization_name: 'xxx',
+						})
 						dispatch(setPassword(values.password))
 						Swal.fire({
 							icon: 'success',

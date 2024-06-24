@@ -1,13 +1,21 @@
 import ArrowLeft from './Icons/ArrowLeft'
 import { ArrowRight } from './Icons'
 import { FormInput } from './molecules/FormInput'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { formatNumber } from '../utils/helper'
 import Image from 'next/image'
 import { onrampPaymentMethod } from '../utils/helper'
+import useSWR from 'swr'
+import { fetcherQuote } from '../utils/axios'
 // asd
-function PaymentMethodModal({ showModal, setShowModal, setPaymentMethod }) {
+function PaymentMethodModal({
+	showModal,
+	setShowModal,
+	setPaymentMethod,
+	paymentResult,
+}) {
 	const [searchValue, setSearchValue] = useState('')
+	const [paymentList, setPaymentList] = useState([])
 
 	const filterBank = (bankData) => {
 		return (
@@ -21,7 +29,11 @@ function PaymentMethodModal({ showModal, setShowModal, setPaymentMethod }) {
 		return a.flatFeeAmount - b.flatFeeAmount
 	}
 
-	const listResult = onrampPaymentMethod.filter(filterBank).sort(sortBank)
+	const listResult = paymentList?.filter(filterBank)
+
+	useEffect(() => {
+		setPaymentList(paymentResult)
+	}, [paymentResult])
 
 	return (
 		<div className={`${showModal ? 'block' : 'hidden'}`}>
@@ -84,20 +96,21 @@ function PaymentMethodModal({ showModal, setShowModal, setPaymentMethod }) {
 												className='rounded-full h-8 w-8'
 												onError={({ currentTarget }) => {
 													currentTarget.onerror = null // prevents looping
-													currentTarget.src = '/img/banks/bank.png'
+													currentTarget.src = ''
 												}}
 												src={result.image}
 											/>
 											<div>
 												<p className='font-bold text-[14px] text-white overflow-ellipsis'>
-													{result.name}
+													{result?.name}
 												</p>
 											</div>
 										</div>
 										<ArrowRight />
 									</div>
 									<p className='text-[#9CA3AF] text-[13px] overflow-ellipsis'>
-										Flat Fee Amount: {formatNumber(result?.flatFeeAmount)} IDR
+										Flat Fee Amount:{' '}
+										{formatNumber(result?.flatFeeAmount ?? '0')} IDR
 									</p>
 								</div>
 							))}

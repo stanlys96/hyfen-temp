@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ButtonAuth from '../../atoms/ButtonAuth'
 import ButtonV2 from '../../atoms/ButtonV2'
 import InputOTP from '../../atoms/InputOTP'
-import { axiosBackend, axiosSecondary } from '../../../utils/axios'
+import { axiosBackend, axiosSecondary, loginAxios } from '../../../utils/axios'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
@@ -29,7 +29,7 @@ const EnterCode = ({ changeStep, email, showCounter = true }) => {
 	const [counter, setCounter] = useState(60)
 	const [isError, setisError] = useState(false)
 	const { verificationToken, password } = useSelector((state) => state.user)
-	console.log(email, '<<< EMAIL')
+
 	const onResend = async () => {
 		try {
 			if (email) {
@@ -53,38 +53,28 @@ const EnterCode = ({ changeStep, email, showCounter = true }) => {
 		changeStep(2)
 		e.preventDefault()
 		setisError(false)
-		const currentEmail = await axiosSecondary.get(
-			`/user-recipients?filters[email][$eq]=${email}`
-		)
-		let emailData
-		if (currentEmail.data.data.length === 0) {
-			const newEmail = await axiosSecondary.post('/user-recipients', {
-				data: {
-					email: email,
-				},
-			})
-			emailData = newEmail?.data?.data
-		} else {
-			emailData = currentEmail?.data?.data?.[0]
-		}
+		const currentUser = await loginAxios.post('/userRampable/login', {
+			email: email,
+			password: password,
+		})
+		console.log(currentUser?.data?.data)
 		try {
 			const result = await axiosBackend.post('/auth/verify-login', {
-				verificationToken,
+				verificationToken: verificationToken,
 				otp,
 			})
+			console.log(result?.data?.data?.accessToken, '<<<')
 			if (result?.data?.message === 'ok') {
 				dispatch(setAccessToken(result?.data?.data?.accessToken))
-				if (emailData) {
-					await axiosSecondary.put(`/user-recipients/${emailData?.id}`, {
-						data: {
-							country: emailData.attributes.country,
-							country_code: emailData.attributes.country_code,
-							email: emailData.attributes.email,
-							name: emailData.attributes.name,
-							access_token: result?.data?.data?.accessToken,
-						},
-					})
-				}
+				const updateUser = await loginAxios.post('/userRampable/update', {
+					email: email,
+					verification_token:
+						currentUser?.data?.data?.verification_token ?? 'xxx',
+					access_token: result?.data?.data?.accessToken,
+					organization_id: 'xxx',
+					organization_name: 'xxx',
+				})
+
 				Toast.fire({
 					icon: 'success',
 					title: 'Verification successful!',

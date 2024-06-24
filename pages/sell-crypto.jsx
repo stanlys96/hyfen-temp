@@ -36,18 +36,16 @@ export default function BuyCrypto() {
 	const [recipientModal, setRecipientModal] = useState(false)
 	const [currentRecipient, setCurrentRecipient] = useState({})
 	const [selectedOption, setSelectedOption] = useState('input')
+	const { data: paymentData } = useSWR(
+		`/reference/payment-methods`,
+		fetcherQuote
+	)
 
-	const [paymentMethod, setPaymentMethod] = useState({
-		name: 'OVO',
-		code: 'ovo',
-		group: 'ewallet',
-		currency: 'IDR',
-		image: '/img/ovo.png',
-		isActive: true,
-		flatFeeAmount: 500,
-		percentFeeAmount: 3,
-		id: '65aea6d44bbef2a538a672f5',
-	})
+	const paymentResult = paymentData?.data?.data
+
+	const [paymentMethod, setPaymentMethod] = useState(
+		paymentResult?.find((data) => data.name === 'Virtual Account Mandiri')
+	)
 	const [isCheckingBankAccount] = useState(false)
 	const [tokenLoading] = useState(false)
 	const { currentSelectedCoin, currentUser, currentSelectedOfframpCoin } =
@@ -155,7 +153,7 @@ export default function BuyCrypto() {
 			setFieldValue('address', address ?? '')
 		}
 	}, [address])
-
+	console.log(paymentMethod, '<<< PAYMENT METHOD')
 	return (
 		<>
 			<Head>
@@ -168,6 +166,7 @@ export default function BuyCrypto() {
 					showModal={paymentModal}
 					setShowModal={setPaymentModal}
 					setPaymentMethod={setPaymentMethod}
+					paymentResult={paymentResult}
 				/>
 				<RecipientModal
 					showModal={recipientModal}
@@ -262,8 +261,8 @@ export default function BuyCrypto() {
 													'info'
 												)
 											}
-											console.log(currentUser)
-											console.log(paymentMethod)
+											console.log(currentUser, '<< WALAO')
+											console.log(paymentMethod, '<<< WLAO')
 											await quoteAxios.post('/recipient', {
 												name: !currentUser?.name
 													? values.email

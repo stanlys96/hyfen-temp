@@ -39,6 +39,7 @@ export const quoteAxios = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
 	headers: {
 		'x-client-secret': process.env.NEXT_PUBLIC_BACKEND_KEY,
+		Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
 	},
 })
 

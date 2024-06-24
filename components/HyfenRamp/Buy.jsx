@@ -67,6 +67,8 @@ export const BuyComponent = () => {
 		fetcherQuote
 	)
 
+	console.log(quoteData, '<<< QUOTE DATA')
+
 	const result = quoteData?.data?.data
 	useEffect(() => {
 		if (result) {
