@@ -37,21 +37,20 @@ export default function BuyCrypto() {
 	const [currentRecipient, setCurrentRecipient] = useState({})
 	const [selectedOption, setSelectedOption] = useState('input')
 	const { data: paymentData } = useSWR(
-		`/reference/payment-methods`,
+		`/reference/banks?limit=1000`,
 		fetcherQuote
 	)
 
 	const paymentResult = paymentData?.data?.data
 
 	const [paymentMethod, setPaymentMethod] = useState(
-		paymentResult?.find((data) => data.name === 'Virtual Account Mandiri')
+		paymentResult?.docs?.find((data) => data.name === 'BANK CENTRAL ASIA')
 	)
 	const [isCheckingBankAccount] = useState(false)
 	const [tokenLoading] = useState(false)
 	const { currentSelectedCoin, currentUser, currentSelectedOfframpCoin } =
 		useSelector((state) => state.user)
 	const { address } = useAccount()
-
 	const filterByName = (nameInBank) => {
 		return nameInBank?.name === currentUser?.name
 	}
@@ -84,6 +83,7 @@ export default function BuyCrypto() {
 		handleChange,
 		setFieldValue,
 		handleSubmit,
+		isValid,
 	} = useFormik({
 		initialValues: {
 			email: '',
@@ -101,7 +101,7 @@ export default function BuyCrypto() {
 			try {
 				const offrampData = await quoteAxios.post('/offramp', {
 					inputAmount: values.cryptoValue,
-					senderName: currentUser?.name,
+					senderName: currentUser?.full_name,
 					walletAddress: values.walletAddress,
 					senderEmail: currentRecipient?.email,
 					receiverId: currentRecipient?.id,
@@ -119,12 +119,11 @@ export default function BuyCrypto() {
 	})
 
 	const { data: recipientData, mutate: recipientMutate } = useSWR(
-		`/recipient?limit=1000`,
+		`/recipient`,
 		fetcherQuote
 	)
 
 	const recipientResult = recipientData?.data?.data?.docs
-	const filteredRecipient = recipientResult?.filter(filterByName)
 
 	const { data: quoteData, isLoading } = useSWR(
 		`/offramp/quote?amount=${parseFloat(
@@ -153,7 +152,7 @@ export default function BuyCrypto() {
 			setFieldValue('address', address ?? '')
 		}
 	}, [address])
-	console.log(paymentMethod, '<<< PAYMENT METHOD')
+
 	return (
 		<>
 			<Head>
@@ -166,13 +165,15 @@ export default function BuyCrypto() {
 					showModal={paymentModal}
 					setShowModal={setPaymentModal}
 					setPaymentMethod={setPaymentMethod}
-					paymentResult={paymentResult}
+					paymentResult={paymentResult?.docs?.filter(
+						(data) => data.currency === 'IDR'
+					)}
 				/>
 				<RecipientModal
 					showModal={recipientModal}
 					setShowModal={setRecipientModal}
 					setPaymentMethod={setCurrentRecipient}
-					listResult={filteredRecipient}
+					listResult={recipientResult}
 				/>
 				<div className='relative h-full w-full container mx-auto flex md:flex-row flex-col gap-y-5 gap-x-10 justify-center items-center h-full pt-[13vh]'>
 					{/* Container content */}
@@ -194,7 +195,7 @@ export default function BuyCrypto() {
 										width={30}
 										height={30}
 										alt='provider'
-										src={paymentMethod?.image}
+										src={'/img/idr.svg'}
 										className='w-8 h-8 rounded-full'
 									/>
 									<p className='font-normal text-white'>
@@ -261,17 +262,16 @@ export default function BuyCrypto() {
 													'info'
 												)
 											}
-											console.log(currentUser, '<< WALAO')
-											console.log(paymentMethod, '<<< WLAO')
-											await quoteAxios.post('/recipient', {
+											console.log(paymentMethod, '<<< PAYMENT METHOD')
+											const recipientData = {
 												name: !currentUser?.name
 													? values.email
 													: currentUser?.name,
 												email: values.email,
 												recipientType: 'Individual',
-												city: 'Singapore',
-												address: 'Singapore',
-												postCode: '1000',
+												city: 'Indonesia',
+												address: 'Indonesia',
+												postCode: '60221',
 												bank: {
 													currency: currentSelectedOfframpCoin?.currency,
 													country: currentSelectedOfframpCoin?.country,
@@ -279,13 +279,14 @@ export default function BuyCrypto() {
 														values.accountNumber[0] === '0'
 															? parseInt('62' + values.accountNumber.slice(1))
 															: values.accountNumber,
-													paymentCode: paymentMethod?.code,
+													paymentCode: paymentMethod?.paymentCode,
 													bankName: paymentMethod?.name,
 													accountName: !currentUser?.name
 														? values.email
 														: currentUser?.name,
 												},
-											})
+											}
+											await quoteAxios.post('/recipient', recipientData)
 											Swal.fire(
 												'Success!',
 												'Successfully added a recipient',
@@ -416,9 +417,29 @@ export default function BuyCrypto() {
 								isError={errors.walletAddress}
 								notes={errors.walletAddress}
 							/>
-							<p className='text-white mt-5 text-[20px] text-bold'>
-								Sell Crypto Breakdown
-							</p>
+							<div className='flex justify-between items-center mt-5'>
+								<p className='text-white text-[14px] md:text-[20px] text-bold'>
+									Sell Crypto Breakdown
+								</p>
+							</div>
+							<div className='flex justify-between items-center mt-5'>
+								<p className='text-white'>
+									{currentSelectedOfframpCoin?.network?.[0]?.toUpperCase() +
+										currentSelectedOfframpCoin?.network?.slice(1)}{' '}
+									Network
+								</p>
+								<Image
+									className='rounded-full'
+									width={50}
+									height={50}
+									src={`/img/${currentSelectedOfframpCoin?.network}.${
+										currentSelectedOfframpCoin?.network?.toLowerCase() ===
+										'stellar'
+											? 'png'
+											: 'svg'
+									}`}
+								/>
+							</div>
 							<div>
 								<div className='flex justify-between items-center gap-x-3 mt-4'>
 									<p className='text-white md:text-[16px] text-[12px]'>
@@ -464,12 +485,19 @@ export default function BuyCrypto() {
 									</p>
 									<p className='text-white font-bold'>0,01 RON</p>
 								</div> */}
-								<div className='flex justify-between mt-7'>
+								<div className='flex justify-between mt-7 items-center'>
 									<p className='text-white text-[20px]'>Total Payment</p>
-									<p className='text-white text-[20px]'>
-										{values.cryptoValue}{' '}
-										{currentSelectedOfframpCoin?.cryptoName}
-									</p>
+									<div className='flex gap-x-2'>
+										<p className='text-white text-[20px]'>
+											{values.cryptoValue}{' '}
+											{currentSelectedOfframpCoin?.cryptoName}
+										</p>
+										<Image
+											src={currentSelectedOfframpCoin?.logo}
+											width={30}
+											height={30}
+										/>
+									</div>
 								</div>
 							</div>
 							<div className='mt-[30px] flex justify-center items-center'>
@@ -487,11 +515,17 @@ export default function BuyCrypto() {
 										// sendTransaction()
 									}}
 									className={`w-full flex items-center gap-x-[12px] justify-center  text-center text-slate-900 ${
-										isLoading || parseFloat(values.idrValue ?? '0') < 50000
+										!currentRecipient?.name ||
+										!isValid ||
+										isLoading ||
+										parseFloat(values.idrValue ?? '0') < 50000
 											? 'bg-[#888888] header__download-button-disabled'
 											: 'bg-white header__download-button'
 									} py-3 px-11 inline-block text-base font-bold ${
-										isLoading || parseFloat(values.idrValue ?? '0') < 50000
+										!currentRecipient?.name ||
+										!isValid ||
+										isLoading ||
+										parseFloat(values.idrValue ?? '0') < 50000
 											? 'cursor-not-allowed'
 											: 'cursor-pointer'
 									}`}

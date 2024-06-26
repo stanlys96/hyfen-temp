@@ -5,6 +5,15 @@ import { useState, useEffect } from 'react'
 import { formatNumber } from '../utils/helper'
 import Image from 'next/image'
 // asd
+
+const earlyPaymentMethods = [
+	'gopay',
+	'ovo',
+	'shopeepay',
+	'bank_central_asia',
+	'linkaja',
+	'dana',
+]
 function PaymentMethodModal({
 	showModal,
 	setShowModal,
@@ -12,25 +21,21 @@ function PaymentMethodModal({
 	paymentResult,
 }) {
 	const [searchValue, setSearchValue] = useState('')
-	const [paymentList, setPaymentList] = useState([])
 
 	const filterBank = (bankData) => {
 		return (
-			bankData.isActive &&
-			bankData.currency === 'IDR' &&
-			bankData.name.toLowerCase().includes(searchValue)
+			bankData?.currency === 'IDR' &&
+			bankData?.name.toLowerCase().includes(searchValue?.toLowerCase())
 		)
 	}
 
-	// const sortBank = (a, b) => {
-	// 	return a.flatFeeAmount - b.flatFeeAmount
-	// }
-
-	const listResult = paymentList?.filter(filterBank)
-
-	useEffect(() => {
-		setPaymentList(paymentResult)
-	}, [paymentResult])
+	const listResult = paymentResult?.filter(filterBank).sort((a, b) => {
+		const aMeetsCriteria = earlyPaymentMethods.includes(a.paymentCode)
+		if (aMeetsCriteria) {
+			return -1
+		}
+		return 0
+	})
 
 	return (
 		<div className={`${showModal ? 'block' : 'hidden'}`}>
@@ -95,7 +100,7 @@ function PaymentMethodModal({
 													currentTarget.onerror = null // prevents looping
 													currentTarget.src = ''
 												}}
-												src={result.image}
+												src={'/img/idr.svg'}
 											/>
 											<div>
 												<p className='font-bold text-[14px] text-white overflow-ellipsis'>

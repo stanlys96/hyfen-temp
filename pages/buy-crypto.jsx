@@ -36,8 +36,7 @@ export default function BuyCrypto() {
 		fetcherQuote
 	)
 
-	const paymentResult = paymentData?.data?.data
-
+	const paymentResult = paymentData?.data?.data?.filter((data) => data.isActive)
 	const [paymentMethod, setPaymentMethod] = useState(
 		paymentResult?.find((data) => data.code === 'virtual_account_mandiri')
 	)

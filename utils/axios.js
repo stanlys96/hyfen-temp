@@ -53,7 +53,7 @@ loginAxios.interceptors.request.use(
 			user: { token },
 		} = store.getState()
 		if (token) {
-			config.headers.authorization = `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+			config.headers.Authorization = `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
 		}
 
 		return config
@@ -66,7 +66,6 @@ quoteAxios.interceptors.request.use(
 		const {
 			user: { accessToken, currentUser },
 		} = store.getState()
-		console.log(store.getState(), '<<< USER')
 		if (accessToken) {
 			config.headers.Authorization = `Bearer ${accessToken}`
 		} else {
