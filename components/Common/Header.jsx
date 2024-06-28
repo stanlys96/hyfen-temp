@@ -69,10 +69,6 @@ function Header({ fixed = true }) {
 										/>
 									</a>
 								</Link>
-								<span className='flex items-end justify-end gap-1 mt-0.5'>
-									<p className='text-xs text-white/60'>powered by </p>
-									<Indodax className='h-3 text-white' />
-								</span>
 							</div>
 
 							{/* Mobile Button Menu */}
