@@ -1,7 +1,7 @@
 import ArrowLeft from './Icons/ArrowLeft'
 import { ArrowRight } from './Icons'
 import { FormInput } from './molecules/FormInput'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { formatNumber } from '../utils/helper'
 import Image from 'next/image'
 // asd
@@ -29,7 +29,7 @@ function PaymentMethodModal({
 		)
 	}
 
-	const listResult = paymentResult?.filter(filterBank).sort((a, b) => {
+	const listResult = paymentResult?.filter(filterBank).sort((a) => {
 		const aMeetsCriteria = earlyPaymentMethods.includes(a.paymentCode)
 		if (aMeetsCriteria) {
 			return -1

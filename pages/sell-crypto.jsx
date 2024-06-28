@@ -51,9 +51,6 @@ export default function BuyCrypto() {
 	const { currentSelectedCoin, currentUser, currentSelectedOfframpCoin } =
 		useSelector((state) => state.user)
 	const { address } = useAccount()
-	const filterByName = (nameInBank) => {
-		return nameInBank?.name === currentUser?.name
-	}
 	const { isPending: isPendingApproval, data: approvalHash } =
 		useWriteContract()
 
