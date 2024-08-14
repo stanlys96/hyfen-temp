@@ -36,10 +36,6 @@ export default function SideDrawer({ open, handleClose }) {
 								/>
 							</a>
 						</Link>
-						<span className='flex items-end justify-end gap-1 -mt-1.5 ml-3'>
-							<p className='text-xs text-white/60'>powered by </p>
-							<Indodax className='h-3 text-white' />
-						</span>
 					</div>
 				</div>
 				<div className='flex justify-center items-center' onClick={handleClose}>

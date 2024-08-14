@@ -53,10 +53,6 @@ const Footer = ({ bgColor }) => {
 									layout='fixed'
 									quality={100}
 								/>
-								<span className='flex my-2 justify-start items-start gap-1 mt-1'>
-									<p className='text-xs text-white/60 -mt-1'>powered by </p>
-									<Indodax className='h-3 text-white' />
-								</span>
 							</div>
 						</div>
 
