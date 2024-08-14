@@ -1,4 +1,3 @@
-import Indodax from '../Icons/Indodax'
 import useTranslation from 'next-translate/useTranslation'
 import Image from 'next/image'
 import Link from 'next/link'
